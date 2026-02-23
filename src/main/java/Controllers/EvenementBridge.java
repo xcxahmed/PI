@@ -11,6 +11,9 @@ import javafx.stage.Window;
 import javafx.scene.web.WebEngine;
 import netscape.javascript.JSObject;
 
+import Services.PdfExportService;
+import javafx.stage.FileChooser;
+import java.io.File;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -82,7 +85,7 @@ public class EvenementBridge {
             }
         });
 
-        Modifierevenementcontroller ctrl = new  Modifierevenementcontroller(
+        Modifierevenementcontroller ctrl = new Modifierevenementcontroller(
                 id, titre, projectId, organisateurId,
                 description, mode, dateDebut, dateFin,
                 lieu, meetingLink, onSuccess
@@ -104,6 +107,41 @@ public class EvenementBridge {
                     lieu, meetingLink, organisateurId
             );
             service.ajouter(e);
+        });
+    }
+
+    // ══════════════════════════════════════════════
+    //  EXPORT PDF
+    //  Appelé depuis JS : window.javaBridge.exportPdf()
+    // ══════════════════════════════════════════════
+    public void exportPdf() {
+        Platform.runLater(() -> {
+            try {
+                // FileChooser pour choisir l'emplacement de sauvegarde
+                FileChooser fc = new FileChooser();
+                fc.setTitle("Enregistrer le rapport PDF");
+                fc.setInitialFileName("evenements_investia.pdf");
+                fc.getExtensionFilters().add(
+                        new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf")
+                );
+
+                Stage stage = (Stage) Window.getWindows().stream()
+                        .filter(Window::isShowing).findFirst().orElse(null);
+
+                File file = fc.showSaveDialog(stage);
+                if (file == null) return; // Annulé par l'utilisateur
+
+                // Générer le PDF
+                PdfExportService.generer(service.getAll(), file.getAbsolutePath());
+
+                // Notifier le HTML — succès
+                engine.executeScript("onPdfExported('OK', '" +
+                        file.getAbsolutePath().replace("\\", "/").replace("'", "\'") + "')");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                engine.executeScript("onPdfExported('ERROR', '" + e.getMessage() + "')");
+            }
         });
     }
 

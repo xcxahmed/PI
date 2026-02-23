@@ -2,6 +2,7 @@ package Controllers;
 
 import Entities.Evenement;
 import Services.Emailservice;
+import Services.Qrservice;
 import Entities.Invitation;
 import Services.EvenementService;
 import Services.InvitationService;
@@ -143,6 +144,72 @@ public class InvitationBridge {
                     email
             );
             invService.modifier(inv);
+        });
+    }
+
+    // ══════════════════════════════════════════════
+    //  GÉNÉRER QR CODE
+    //  Appelé depuis JS : window.invBridge.generateQr(content)
+    //  Retourne le résultat via JS : showQrImage(base64)
+    // ══════════════════════════════════════════════
+    // ✅ Stocker le base64 courant pour le téléchargement
+    private String currentQrBase64 = null;
+
+    public void generateQr(String content) {
+        javafx.application.Platform.runLater(() -> {
+            try {
+                String base64 = Qrservice.genererBase64(content, 220);
+                currentQrBase64 = base64;
+                engine.executeScript("showQrImage('" + base64 + "')");
+            } catch (Exception e) {
+                e.printStackTrace();
+                engine.executeScript("showQrImage('ERROR')");
+            }
+        });
+    }
+
+    public void downloadQr(String nomEvenement) {
+        javafx.application.Platform.runLater(() -> {
+            try {
+                if (currentQrBase64 == null) {
+                    engine.executeScript("toast('QR Code non généré', 'error')");
+                    return;
+                }
+
+                // ✅ Sauvegarder directement sur le Bureau — sans FileChooser
+                String safeName = nomEvenement.replaceAll("[^a-zA-Z0-9_-]", "_");
+                String bureau   = System.getProperty("user.home") + java.io.File.separator + "Downloads";
+                java.io.File dossier = new java.io.File(bureau);
+                if (!dossier.exists()) {
+                    // Si pas de Bureau, sauvegarder dans le dossier home
+                    dossier = new java.io.File(System.getProperty("user.home"));
+                }
+
+                java.io.File file = new java.io.File(dossier, "qrcode_" + safeName + ".png");
+
+                // Si le fichier existe déjà, ajouter un numéro
+                int n = 1;
+                while (file.exists()) {
+                    file = new java.io.File(dossier, "qrcode_" + safeName + "_" + n + ".png");
+                    n++;
+                }
+
+                // Décoder base64 → PNG
+                byte[] bytes = java.util.Base64.getDecoder().decode(currentQrBase64);
+                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) {
+                    fos.write(bytes);
+                }
+
+                // ✅ Toast avec chemin exact pour savoir où chercher le fichier
+                final String chemin = file.getAbsolutePath();
+                engine.executeScript("toast('✅ QR Code sauvegardé dans Téléchargements : "
+                        + file.getName() + "', 'success')");
+                System.out.println("✅ QR Code sauvegardé : " + chemin);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                engine.executeScript("toast('❌ Erreur sauvegarde : " + e.getMessage() + "', 'error')");
+            }
         });
     }
 
