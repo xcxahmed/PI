@@ -8,10 +8,28 @@ import javax.mail.internet.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
-
+/**
+ * Service d'envoi d'email automatique lors d'une invitation.
+ * Utilise Gmail SMTP (TLS port 587).
+ *
+ * ⚠️ CONFIGURATION REQUISE :
+ *   1. Remplacez SENDER_EMAIL et SENDER_PASSWORD par vos identifiants Gmail.
+ *   2. Activez "Mots de passe d'application" dans votre compte Google :
+ *      → https://myaccount.google.com/apppasswords
+ *      (Sécurité → Connexion → Mots de passe des applications)
+ *   3. Ajoutez la dépendance JavaMail dans pom.xml :
+ *      <dependency>
+ *          <groupId>com.sun.mail</groupId>
+ *          <artifactId>jakarta.mail</artifactId>
+ *          <version>2.0.1</version>
+ *      </dependency>
+ */
 public class Emailservice {
 
-
+    // ══════════════════════════════════════════════
+    //  ✅ Credentials lus depuis config.properties
+    //     (fichier NON partagé — dans .gitignore)
+    // ══════════════════════════════════════════════
     private static final String SENDER_EMAIL;
     private static final String SENDER_PASSWORD;
     private static final String SENDER_NAME = "Investia — Événements";
@@ -21,7 +39,7 @@ public class Emailservice {
         try (java.io.InputStream in =
                      Emailservice.class.getResourceAsStream("/config.properties")) {
             if (in != null) {
-                config.load(in);
+                config.load(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
                 System.out.println("✅ config.properties chargé");
             } else {
                 System.err.println("⚠️ config.properties introuvable dans resources/");
@@ -43,12 +61,17 @@ public class Emailservice {
         // Envoi dans un thread séparé pour ne pas bloquer l'UI
         new Thread(() -> {
             try {
+                // ✅ Forcer UTF-8 pour tous les caractères spéciaux
+                System.setProperty("mail.mime.charset",       "UTF-8");
+                System.setProperty("mail.mime.encodefilename","true");
+
                 Properties props = new Properties();
                 props.put("mail.smtp.auth",            "true");
                 props.put("mail.smtp.starttls.enable", "true");
                 props.put("mail.smtp.host",            "smtp.gmail.com");
                 props.put("mail.smtp.port",            "587");
                 props.put("mail.smtp.ssl.trust",       "smtp.gmail.com");
+                props.put("mail.mime.charset",         "UTF-8");
 
                 Session session = Session.getInstance(props, new Authenticator() {
                     @Override
@@ -58,10 +81,10 @@ public class Emailservice {
                 });
 
                 Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(SENDER_EMAIL, SENDER_NAME));
+                message.setFrom(new InternetAddress(SENDER_EMAIL, SENDER_NAME, "UTF-8"));
                 message.setRecipients(Message.RecipientType.TO,
                         InternetAddress.parse(inv.getEmail()));
-                message.setSubject("✉️ Vous êtes invité(e) à : " + ev.getTitre());
+                message.setSubject(javax.mail.internet.MimeUtility.encodeText("✉️ Vous êtes invité(e) à : " + ev.getTitre(), "UTF-8", "B"));
                 message.setContent(buildHtmlBody(inv, ev), "text/html; charset=UTF-8");
 
                 Transport.send(message);

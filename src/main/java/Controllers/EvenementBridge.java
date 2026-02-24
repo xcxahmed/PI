@@ -46,6 +46,21 @@ public class EvenementBridge {
     //  NAVIGATION → page Invitations
     //  Appelé depuis JS : window.javaBridge.goInvitations()
     // ══════════════════════════════════════════════
+    public void goChatbot() {
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chatbot.fxml"));
+                Parent root  = loader.load();
+                Stage  stage = (Stage) Window.getWindows().stream()
+                        .filter(Window::isShowing).findFirst().orElse(null);
+                if (stage != null) {
+                    stage.setTitle("Investia — Assistant IA");
+                    stage.getScene().setRoot(root);
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+    }
+
     public void goInvitations() {
         Platform.runLater(() -> {
             try {

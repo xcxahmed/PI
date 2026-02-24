@@ -764,6 +764,11 @@
             });
     }
 
+    function goChatbot() {
+        if (window.invBridge && window.invBridge.goChatbot)
+            window.invBridge.goChatbot();
+    }
+
     // ══════════════════════════════════════════════
     //  UTILS
     // ══════════════════════════════════════════════
@@ -816,6 +821,7 @@
 
         // Titre et sous-titre
         g('qrEvName').textContent = ev.titre;
+        g('qrOverlay').setAttribute('data-titre', ev.titre);
         g('qrEvSub').textContent  = invs.length + ' invité(s) — ' + (ev.mode === 'EN_LIGNE' ? '🌐 En ligne' : '🏢 Présentiel');
         g('qrCount').textContent  = invs.length === 0
             ? 'Aucun invité pour cet événement'
@@ -888,11 +894,13 @@
     function downloadQr() {
         var img = g('qrCanvas').querySelector('img');
         if (!img) { toast('QR Code non encore généré', 'error'); return; }
-        var link = document.createElement('a');
-        link.download = 'qrcode_invites.png';
-        link.href = img.src;
-        link.click();
-        toast('✅ QR Code téléchargé !', 'success');
+        // ✅ Appel Java — FileChooser pour choisir l'emplacement
+        var titre = g('qrOverlay').getAttribute('data-titre') || 'evenement';
+        if (window.invBridge && typeof window.invBridge.downloadQr === 'function') {
+            window.invBridge.downloadQr(titre);
+        } else {
+            toast('Bridge indisponible', 'error');
+        }
     }
 
     g('qrOverlay').addEventListener('click', function(e){ if(e.target===this) closeQr(); });

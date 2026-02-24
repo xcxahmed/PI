@@ -163,6 +163,7 @@
         <div class="nav-links">
             <a class="nav-link active">📋 Événements</a>
             <a class="nav-link" onclick="goInvitations()">✉️ Invitations</a>
+            <a class="nav-link" onclick="goChatbot()">🤖 Assistant IA</a>
         </div>
     </div>
 </nav>
@@ -324,6 +325,10 @@
     var pendingDelId = null;
 
     // ══ NAVIGATION ══
+    function goChatbot() {
+        withBridge(function(b){ b.goChatbot(); });
+    }
+
     function goInvitations() {
         if (window.javaBridge && typeof window.javaBridge.goInvitations === 'function') {
             window.javaBridge.goInvitations();
