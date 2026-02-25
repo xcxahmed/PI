@@ -86,7 +86,7 @@ public class PdfExportService {
         Paragraph title = new Paragraph();
         title.add(new Chunk("📅  Rapport des Événements\n",
                 FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, WHITE)));
-        title.add(new Chunk("Investia — Plateforme de gestion d'événements   •   " + count + " événement(s)",
+        title.add(new Chunk("Investia — Plateforme de crowdlending   •   " + count + " événement(s)",
                 FontFactory.getFont(FontFactory.HELVETICA, 11, new Color(148, 163, 184))));
 
         titleCell.addElement(title);

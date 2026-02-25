@@ -67,6 +67,30 @@ public class InvitationBridge {
     }
 
     // ══════════════════════════════════════════════
+    //  NAVIGATION → page Chatbot
+    //  Appelé depuis JS : window.invBridge.goChatbot()
+    // ══════════════════════════════════════════════
+    public void goChatbot() {
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource("/fxml/chatbot.fxml")
+                );
+                Parent root  = loader.load();
+                Stage  stage = (Stage) Window.getWindows().stream()
+                        .filter(Window::isShowing)
+                        .findFirst().orElse(null);
+                if (stage != null) {
+                    stage.setTitle("Investia — Chatbot");
+                    stage.getScene().setRoot(root);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════════
     //  GET ALL EVENEMENTS + INVITATIONS
     //  Retourne JSON : [ { evenement, invitations:[] }, ... ]
     // ══════════════════════════════════════════════
@@ -181,26 +205,22 @@ public class InvitationBridge {
                 String bureau   = System.getProperty("user.home") + java.io.File.separator + "Downloads";
                 java.io.File dossier = new java.io.File(bureau);
                 if (!dossier.exists()) {
-                    // Si pas de Bureau, sauvegarder dans le dossier home
                     dossier = new java.io.File(System.getProperty("user.home"));
                 }
 
                 java.io.File file = new java.io.File(dossier, "qrcode_" + safeName + ".png");
 
-                // Si le fichier existe déjà, ajouter un numéro
                 int n = 1;
                 while (file.exists()) {
                     file = new java.io.File(dossier, "qrcode_" + safeName + "_" + n + ".png");
                     n++;
                 }
 
-                // Décoder base64 → PNG
                 byte[] bytes = java.util.Base64.getDecoder().decode(currentQrBase64);
                 try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) {
                     fos.write(bytes);
                 }
 
-                // ✅ Toast avec chemin exact pour savoir où chercher le fichier
                 final String chemin = file.getAbsolutePath();
                 engine.executeScript("toast('✅ QR Code sauvegardé dans Téléchargements : "
                         + file.getName() + "', 'success')");

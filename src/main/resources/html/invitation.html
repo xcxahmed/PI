@@ -25,6 +25,8 @@
         .nav-link{padding:6px 14px;border-radius:8px;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s}
         .nav-link:hover{color:var(--primary);background:rgba(29,78,216,.06)}
         .nav-link.active{color:var(--primary);background:rgba(29,78,216,.08)}
+        .nav-link.chatbot{color:#7c3aed;background:rgba(124,58,237,.06)}
+        .nav-link.chatbot:hover{color:#7c3aed;background:rgba(124,58,237,.12)}
 
         /* ══ PAGE ══ */
         .container{max-width:1120px;margin:28px auto 60px;padding:0 16px}
@@ -194,6 +196,7 @@
         <div class="nav-links">
             <button class="nav-link" onclick="goEvenements()">📋 Événements</button>
             <button class="nav-link active">✉️ Invitations</button>
+            <button class="nav-link chatbot" onclick="goChatbot()">🤖 Chatbot</button>
         </div>
     </div>
 </nav>
@@ -290,8 +293,6 @@
     // ══════════════════════════════════════════════
     //  RÈGLES VALIDATION
     // ══════════════════════════════════════════════
-    // Ajout invitation (par event) : champs préfixés par evId
-    // Modifier invitation (modal)  : champs préfixés par "m"
     var MODAL_RULES = {
         mEmail : { required:true,  isEmail:true, label:'Email' },
         mRole  : { required:false, minLen:2, maxLen:60, label:'Rôle' },
@@ -304,6 +305,12 @@
     function goEvenements() {
         if (window.invBridge && typeof window.invBridge.goEvenements === 'function') {
             window.invBridge.goEvenements();
+        }
+    }
+
+    function goChatbot() {
+        if (window.invBridge && typeof window.invBridge.goChatbot === 'function') {
+            window.invBridge.goChatbot();
         }
     }
 
@@ -357,7 +364,6 @@
                 +'</div>'
 
                 +'<div class="ev-body expanded" id="evBody_'+ev.id+'">'
-                // ── FORMULAIRE AJOUT avec validation ──
                 +'<div class="inv-form" id="invForm_'+ev.id+'" style="display:none">'
                 +'<p class="inv-form-title">✉️ Nouvelle invitation pour <em>'+esc(ev.titre)+'</em></p>'
                 +'<div class="form-grid">'
@@ -386,16 +392,12 @@
                 +'<button class="btn primary" onclick="submitAjouter('+ev.id+')">➕ Ajouter</button>'
                 +'</div>'
                 +'</div>'
-
-                // ── LISTE INVITATIONS ──
                 +'<div class="inv-list" id="invList_'+ev.id+'">'+buildInvList(invs)+'</div>'
-                // ✅ MAP uniquement pour PRÉSENTIEL
                 +(!isO && ev.lieu ? buildMapBlock(ev.id, ev.lieu) : '')
                 +'</div>'
                 +'</div>';
         }
         g('mainContent').innerHTML = html;
-        // Charger les cartes après rendu
         setTimeout(initMaps, 100);
     }
 
@@ -437,7 +439,6 @@
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
         var body = g('evBody_'+evId);
         if (body.classList.contains('collapsed')) toggleBlock(evId);
-        // Reset validation si on ouvre
         if (form.style.display === 'block') resetAjoutForm(evId);
     }
     function resetAjoutForm(evId) {
@@ -452,8 +453,7 @@
     }
 
     // ══════════════════════════════════════════════
-    //  VALIDATION — FORMULAIRE AJOUT (par evId)
-    //  va(evId, fieldPrefix)
+    //  VALIDATION — FORMULAIRE AJOUT
     // ══════════════════════════════════════════════
     var AJOUT_RULES = {
         fEmail : { required:true,  isEmail:true,            label:'Email' },
@@ -488,7 +488,6 @@
 
     // ══════════════════════════════════════════════
     //  VALIDATION — MODAL MODIFIER
-    //  vm(fieldId)
     // ══════════════════════════════════════════════
     function vm(id) {
         var el  = g(id);
@@ -513,7 +512,6 @@
         return ok;
     }
 
-    // ── helpers visuels ──
     function setF(el, msg, isOk, text) {
         el.classList.toggle('f-ok',  isOk);
         el.classList.toggle('f-err', !isOk);
@@ -567,19 +565,15 @@
 
         g('mInvId').value = inv.id;
         g('mEvId').value  = inv.evenementId;
-
-        // Préremplir et valider visuellement
         g('mEmail').value = inv.email      || '';
         g('mRole').value  = inv.roleInvite || '';
         g('mDate').value  = inv.dateInvitation ? inv.dateInvitation.replace(' ','T').substring(0,16) : '';
 
-        // Reset + valider les champs préremplis
         Object.keys(MODAL_RULES).forEach(function(id) {
             var el = g(id); if (el) { el.classList.remove('f-ok','f-err'); }
             var msg = g('msg_'+id); if (msg) { msg.className='f-msg'; msg.textContent=''; }
         });
-        // Valider visuellement si valeurs présentes
-        if (inv.email)      vm('mEmail');
+        if (inv.email)          vm('mEmail');
         if (inv.dateInvitation) vm('mDate');
 
         g('modalAlert').className = 'modal-alert';
@@ -589,7 +583,6 @@
 
     function closeModal() {
         g('modalOverlay').classList.remove('show');
-        // Reset champs modal
         ['mEmail','mRole','mDate'].forEach(function(id) {
             var el = g(id); if(el){ el.classList.remove('f-ok','f-err'); }
             var msg = g('msg_'+id); if(msg){ msg.className='f-msg'; msg.textContent=''; }
@@ -682,7 +675,6 @@
         renderBlocks(filtered);
     }
 
-
     // ══════════════════════════════════════════════
     //  MAP — Leaflet + OpenStreetMap + Nominatim
     // ══════════════════════════════════════════════
@@ -702,7 +694,6 @@
         els.forEach(function(el) {
             var evId = el.id.replace('mapLoading_','');
             if (mapInstances[evId]) return;
-            // Trouver l'événement dans allData
             var entry = null;
             for (var i=0;i<allData.length;i++) {
                 if (String(allData[i].evenement.id) === String(evId)) { entry = allData[i]; break; }
@@ -764,11 +755,6 @@
             });
     }
 
-    function goChatbot() {
-        if (window.invBridge && window.invBridge.goChatbot)
-            window.invBridge.goChatbot();
-    }
-
     // ══════════════════════════════════════════════
     //  UTILS
     // ══════════════════════════════════════════════
@@ -809,7 +795,6 @@
     var qrInstance = null;
 
     function openQr(evId) {
-        // Trouver l'événement + ses invitations dans allData
         var entry = null;
         for (var i = 0; i < allData.length; i++) {
             if (String(allData[i].evenement.id) === String(evId)) { entry = allData[i]; break; }
@@ -819,7 +804,6 @@
         var ev   = entry.evenement;
         var invs = entry.invitations;
 
-        // Titre et sous-titre
         g('qrEvName').textContent = ev.titre;
         g('qrOverlay').setAttribute('data-titre', ev.titre);
         g('qrEvSub').textContent  = invs.length + ' invité(s) — ' + (ev.mode === 'EN_LIGNE' ? '🌐 En ligne' : '🏢 Présentiel');
@@ -827,7 +811,6 @@
             ? 'Aucun invité pour cet événement'
             : invs.length + ' invité(s) encodé(s) dans le QR Code';
 
-        // Liste visuelle des invités
         var listHtml = '';
         if (invs.length === 0) {
             listHtml = '<div class="qr-empty-inv">📭 Aucune invitation pour cet événement</div>';
@@ -842,11 +825,8 @@
             }
         }
         g('qrInvitesList').innerHTML = listHtml;
-
-        // Afficher loading dans le canvas
         g('qrCanvas').innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:13px">⏳ Génération...</div>';
 
-        // ✅ Demander à Java de générer le QR Code
         if (window.invBridge && typeof window.invBridge.generateQr === 'function') {
             var content = buildQrContent(ev, invs);
             window.invBridge.generateQr(content);
@@ -857,7 +837,6 @@
         g('qrOverlay').classList.add('show');
     }
 
-    // ✅ Appelé par Java avec l'image base64
     function showQrImage(base64Png) {
         g('qrCanvas').innerHTML =
             '<img src="data:image/png;base64,' + base64Png + '"'
@@ -894,7 +873,6 @@
     function downloadQr() {
         var img = g('qrCanvas').querySelector('img');
         if (!img) { toast('QR Code non encore généré', 'error'); return; }
-        // ✅ Appel Java — FileChooser pour choisir l'emplacement
         var titre = g('qrOverlay').getAttribute('data-titre') || 'evenement';
         if (window.invBridge && typeof window.invBridge.downloadQr === 'function') {
             window.invBridge.downloadQr(titre);
