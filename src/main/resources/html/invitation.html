@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8"/>
     <title>Investra — Invitations</title>
-    <!-- Leaflet Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -15,8 +14,6 @@
         }
         *{box-sizing:border-box}
         body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
-
-        /* ══ NAVBAR ══ */
         .navbar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid rgba(15,23,42,.08);box-shadow:0 4px 16px rgba(15,23,42,.06)}
         .nav-inner{max-width:1120px;margin:0 auto;padding:0 16px;height:52px;display:flex;align-items:center}
         .nav-brand{font-size:17px;font-weight:900;color:var(--navy);margin-right:32px}
@@ -25,40 +22,27 @@
         .nav-link{padding:6px 14px;border-radius:8px;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;transition:all .15s}
         .nav-link:hover{color:var(--primary);background:rgba(29,78,216,.06)}
         .nav-link.active{color:var(--primary);background:rgba(29,78,216,.08)}
-        .nav-link.chatbot{color:#7c3aed;background:rgba(124,58,237,.06)}
-        .nav-link.chatbot:hover{color:#7c3aed;background:rgba(124,58,237,.12)}
-
-        /* ══ PAGE ══ */
         .container{max-width:1120px;margin:28px auto 60px;padding:0 16px}
         .page-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;overflow:hidden;position:relative;margin-bottom:24px}
-        .page-hero::before{content:"";position:absolute;inset:0;pointer-events:none;
-            background:radial-gradient(700px 200px at 10% 0%,rgba(29,78,216,.09),transparent 55%),
-            radial-gradient(700px 200px at 95% 0%,rgba(6,182,212,.09),transparent 55%)}
+        .page-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(700px 200px at 10% 0%,rgba(29,78,216,.09),transparent 55%),radial-gradient(700px 200px at 95% 0%,rgba(6,182,212,.09),transparent 55%)}
         .hero-inner{position:relative;z-index:1}
         .badge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid rgba(29,78,216,.18);background:rgba(29,78,216,.06);color:var(--navy);margin-bottom:8px}
         .dot-b{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent))}
         h1{margin:0 0 4px;font-size:26px;font-weight:900}
         .pitch{margin:0;color:var(--muted);font-size:14px}
-
-        /* ══ TOOLBAR ══ */
         .toolbar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
         .search-wrap{position:relative;flex:1;min-width:200px}
         .search-wrap input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:12px;background:#fff;outline:none;font-size:13.5px;font-family:inherit;color:var(--text);transition:border-color .15s,box-shadow .15s}
         .search-wrap input:focus{border-color:rgba(29,78,216,.35);box-shadow:0 0 0 3px rgba(29,78,216,.10)}
         .search-wrap::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none}
         .count-total{font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
-
-        /* ══ ÉTATS ══ */
         .loading{text-align:center;padding:50px;color:var(--muted)}
         .spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:10px}
         @keyframes spin{to{transform:rotate(360deg)}}
         .empty-global{text-align:center;padding:60px 20px;color:var(--muted);font-size:15px;font-weight:600}
         .empty-global .big{font-size:50px;margin-bottom:14px}
-
-        /* ══ EVENT BLOCK ══ */
         .ev-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
         .ev-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(29,78,216,.03),rgba(6,182,212,.03));flex-wrap:wrap;gap:10px;cursor:pointer}
-
         .ev-info{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
         .ev-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;font-size:18px;flex-shrink:0}
         .ev-text{min-width:0}
@@ -72,43 +56,33 @@
         .toggle-icon{font-size:16px;color:var(--muted);transition:transform .25s;flex-shrink:0}
         .toggle-icon.open{transform:rotate(180deg)}
         .ev-header-actions{display:flex;align-items:center;gap:8px}
-
-        /* ══ BODY ══ */
         .ev-body{overflow:hidden;transition:max-height .35s ease,padding .25s}
         .ev-body.collapsed{max-height:0;padding:0 18px}
         .ev-body.expanded{max-height:3000px;padding:16px 18px}
-
-        /* ══ FORMULAIRE AJOUT INVITATION ══ */
         .inv-form{background:#f8fafc;border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px}
         .inv-form-title{font-size:13px;font-weight:900;color:var(--navy);margin:0 0 14px;display:flex;align-items:center;gap:7px}
         .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:start}
         @media(max-width:700px){.form-grid{grid-template-columns:1fr}}
         .form-btn-row{display:flex;justify-content:flex-end;margin-top:12px;gap:8px}
-
-        /* ══ CONTRÔLE DE SAISIE ══ */
+        .ff{position:relative}
         .ff label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:#0b2a55;font-weight:900;margin:0 0 5px}
-        .ff input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:#fff;outline:none;font-size:13.5px;font-family:inherit;color:var(--text);transition:border-color .15s,box-shadow .15s}
+        .ff input[type=text],.ff input[type=email]{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:10px;background:#fff;outline:none;font-size:13.5px;font-family:inherit;color:var(--text);transition:border-color .15s,box-shadow .15s}
         .ff input:focus{border-color:rgba(29,78,216,.35);box-shadow:0 0 0 3px rgba(29,78,216,.10)}
         input.f-err{border-color:rgba(239,68,68,.55)!important;box-shadow:0 0 0 3px rgba(239,68,68,.10)!important;background:rgba(239,68,68,.02)!important}
         input.f-ok {border-color:rgba(22,163,74,.45)!important;box-shadow:0 0 0 3px rgba(22,163,74,.08)!important}
         .f-msg{font-size:11px;margin-top:4px;font-weight:700;min-height:15px}
         .f-msg.err{color:var(--danger)}
         .f-msg.ok {color:var(--success)}
-
-        /* ══ INVITATION LIST ══ */
         .inv-list{display:flex;flex-direction:column;gap:10px}
         .inv-empty{text-align:center;padding:20px;color:var(--muted);font-size:13px;font-style:italic}
-        .inv-item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:box-shadow .15s}
-
+        .inv-item{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
         .inv-item-info{flex:1;min-width:0}
         .inv-email{font-size:14px;font-weight:800;margin:0 0 4px;display:flex;align-items:center;gap:7px}
         .inv-email-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0}
         .inv-details{display:flex;gap:12px;flex-wrap:wrap}
         .inv-detail{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
         .inv-actions{display:flex;gap:7px;flex-shrink:0}
-
-        /* ══ BUTTONS ══ */
-        .btn{border:0;cursor:pointer;font-weight:800;font-size:13px;padding:8px 14px;border-radius:10px;display:inline-flex;align-items:center;gap:6px;transition:transform .15s,filter .15s;white-space:nowrap}
+        .btn{border:0;cursor:pointer;font-weight:800;font-size:13px;padding:8px 14px;border-radius:10px;display:inline-flex;align-items:center;gap:6px;transition:filter .15s;white-space:nowrap}
         .btn.primary{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;box-shadow:0 6px 16px rgba(29,78,216,.18)}
         .btn.ghost  {background:#fff;border:1px solid var(--border);color:var(--text)}
         .btn.danger {background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#b91c1c}
@@ -117,12 +91,10 @@
         .btn.xs{padding:5px 10px;font-size:11.5px;border-radius:8px}
         .btn:hover{filter:brightness(1.04)}
 
-
         /* ══ MODAL MODIFIER ══ */
         .overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:900;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .22s}
         .overlay.show{opacity:1;pointer-events:auto}
         .modal{background:var(--card);border:1px solid var(--border);border-radius:20px;box-shadow:0 30px 80px rgba(15,23,42,.2);width:100%;max-width:540px}
-
         .modal-header{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
         .modal-header h3{margin:0;font-size:17px;font-weight:900}
         .modal-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:16px;display:grid;place-items:center}
@@ -130,8 +102,6 @@
         .modal-body{padding:20px}
         .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
         .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
-
-        /* ALERT GLOBAL MODAL */
         .modal-alert{display:none;border-radius:10px;padding:10px 13px;font-size:13px;font-weight:700;margin-top:12px}
         .modal-alert.error{border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.07);color:#7f1d1d;display:block}
         .modal-alert.ok   {border:1px solid rgba(22,163,74,.25);background:rgba(22,163,74,.07);color:#14532d;display:block}
@@ -155,10 +125,10 @@
         /* ══ MAP ══ */
         .ev-map-wrap{margin:10px 0 6px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
         .ev-map-loading{display:flex;align-items:center;justify-content:center;gap:8px;height:150px;color:var(--muted);font-size:13px;background:#f8fafc}
-        .btn-itineraire{width:100%;margin-top:6px;justify-content:center;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);color:#0369a1;border-radius:10px;padding:7px;font-size:12px;font-weight:800;cursor:pointer;display:none;align-items:center;gap:6px;transition:all .15s;text-decoration:none}
+        .btn-itineraire{width:100%;margin-top:6px;justify-content:center;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);color:#0369a1;border-radius:10px;padding:7px;font-size:12px;font-weight:800;cursor:pointer;display:none;align-items:center;gap:6px;transition:all .15s}
         .btn-itineraire:hover{background:rgba(6,182,212,.15)}
 
-        /* ══ QR MODAL ══ */
+        /* ══ QR ══ */
         .qr-overlay{position:fixed;inset:0;background:rgba(15,23,42,.60);z-index:980;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .22s}
         .qr-overlay.show{opacity:1;pointer-events:auto}
         .qr-modal{background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(15,23,42,.25);width:100%;max-width:420px;overflow:hidden;transform:scale(.94);transition:transform .22s}
@@ -171,7 +141,6 @@
         .qr-ev-name{font-size:14px;font-weight:900;color:#0b2a55;margin:0 0 6px}
         .qr-ev-sub{font-size:12px;color:#64748b;margin:0 0 20px}
         .qr-box{display:inline-flex;align-items:center;justify-content:center;background:#f8fafc;border:2px solid #e2e8f0;border-radius:16px;padding:18px;margin-bottom:18px}
-        #qrCanvas{display:block}
         .qr-invites-count{font-size:12px;font-weight:700;color:#64748b;margin-bottom:16px}
         .qr-invites-list{text-align:left;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;max-height:160px;overflow-y:auto;margin-bottom:16px}
         .qr-invite-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9;font-size:13px}
@@ -189,14 +158,12 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
     <div class="nav-inner">
         <div class="nav-brand">📅 Invest<span>ia</span></div>
         <div class="nav-links">
             <button class="nav-link" onclick="goEvenements()">📋 Événements</button>
             <button class="nav-link active">✉️ Invitations</button>
-            <button class="nav-link chatbot" onclick="goChatbot()">🤖 Chatbot</button>
         </div>
     </div>
 </nav>
@@ -209,20 +176,18 @@
             <p class="pitch">Chaque événement affiche ses invitations. Ajoutez, modifiez ou supprimez librement.</p>
         </div>
     </div>
-
     <div class="toolbar">
         <div class="search-wrap">
             <input type="text" id="searchInput" placeholder="Rechercher un événement ou une invitation…" oninput="filterAll()"/>
         </div>
         <span class="count-total" id="countTotal">0 événement(s)</span>
     </div>
-
-    <div class="loading"     id="stateLoad"><div class="spinner"></div><p>Chargement…</p></div>
+    <div class="loading"      id="stateLoad"><div class="spinner"></div><p>Chargement…</p></div>
     <div class="empty-global" id="stateEmpty" style="display:none"><div class="big">📭</div><p>Aucun événement trouvé</p></div>
     <div id="mainContent"></div>
 </div>
 
-<!-- ══ MODAL MODIFIER INVITATION ══ -->
+<!-- MODAL MODIFIER -->
 <div class="overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-header">
@@ -232,32 +197,25 @@
         <div class="modal-body">
             <input type="hidden" id="mInvId"/>
             <input type="hidden" id="mEvId"/>
-
             <div class="modal-grid">
-                <!-- Email -->
                 <div class="ff">
                     <label>Email <span style="color:var(--danger)">*</span></label>
-                    <input id="mEmail" type="email" placeholder="contact@exemple.com"
-                           oninput="vm('mEmail')" onblur="vm('mEmail')"/>
+                    <input id="mEmail" type="email" placeholder="contact@exemple.com" oninput="vm('mEmail')" onblur="vm('mEmail')"/>
                     <div class="f-msg" id="msg_mEmail"></div>
                 </div>
-                <!-- Rôle -->
                 <div class="ff">
                     <label>Rôle invité</label>
-                    <input id="mRole" type="text" placeholder="Investisseur, Partenaire…"
-                           oninput="vm('mRole')" onblur="vm('mRole')"/>
+                    <input id="mRole" type="text" placeholder="Investisseur, Partenaire…" oninput="vm('mRole')" onblur="vm('mRole')"/>
                     <div class="f-msg" id="msg_mRole"></div>
                 </div>
             </div>
-
-            <!-- Date -->
+            <!-- ✅ CUSTOM PICKER pour la modal modifier -->
             <div class="ff" style="margin-top:12px">
                 <label>Date d'invitation <span style="color:var(--danger)">*</span></label>
-                <input id="mDate" type="datetime-local"
-                       onchange="vm('mDate')" onblur="vm('mDate')"/>
+                <input type="hidden" id="mDate"/>
+                <div id="dp_mDate"></div>
                 <div class="f-msg" id="msg_mDate"></div>
             </div>
-
             <div class="modal-alert" id="modalAlert"></div>
         </div>
         <div class="modal-footer">
@@ -267,7 +225,7 @@
     </div>
 </div>
 
-<!-- ══ DIALOG SUPPRESSION ══ -->
+<!-- DIALOG SUPPRESSION -->
 <div class="dialog-overlay" id="dialogOverlay">
     <div class="dialog">
         <div class="d-icon">🗑️</div>
@@ -282,610 +240,7 @@
 
 <div id="toast"><span id="toastMsg"></span></div>
 
-<script>
-    // ══════════════════════════════════════════════
-    //  ÉTAT GLOBAL
-    // ══════════════════════════════════════════════
-    var allData      = [];
-    var invMap       = {};
-    var pendingDelId = null;
-
-    // ══════════════════════════════════════════════
-    //  RÈGLES VALIDATION
-    // ══════════════════════════════════════════════
-    var MODAL_RULES = {
-        mEmail : { required:true,  isEmail:true, label:'Email' },
-        mRole  : { required:false, minLen:2, maxLen:60, label:'Rôle' },
-        mDate  : { required:true,  isDate:true,  label:'Date d\'invitation' }
-    };
-
-    // ══════════════════════════════════════════════
-    //  NAVIGATION
-    // ══════════════════════════════════════════════
-    function goEvenements() {
-        if (window.invBridge && typeof window.invBridge.goEvenements === 'function') {
-            window.invBridge.goEvenements();
-        }
-    }
-
-    function goChatbot() {
-        if (window.invBridge && typeof window.invBridge.goChatbot === 'function') {
-            window.invBridge.goChatbot();
-        }
-    }
-
-    // ══════════════════════════════════════════════
-    //  RENDER — appelé par Java : renderAll(json)
-    // ══════════════════════════════════════════════
-    function renderAll(data) {
-        if (typeof data === 'string') { try { data = JSON.parse(data); } catch(e) { data = []; } }
-        allData = data;
-        invMap  = {};
-        for (var i = 0; i < data.length; i++) {
-            var invs = data[i].invitations;
-            for (var j = 0; j < invs.length; j++) invMap[invs[j].id] = invs[j];
-        }
-        g('stateLoad').style.display   = 'none';
-        g('countTotal').textContent    = data.length + ' événement(s)';
-        g('stateEmpty').style.display  = data.length === 0 ? 'block' : 'none';
-        renderBlocks(data);
-    }
-
-    function renderBlocks(data) {
-        if (!data || data.length === 0) { g('mainContent').innerHTML = ''; return; }
-        var html = '';
-        for (var i = 0; i < data.length; i++) {
-            var ev   = data[i].evenement;
-            var invs = data[i].invitations;
-            var isO  = ev.mode === 'EN_LIGNE';
-            var mc   = isO ? 'online' : 'presentiel';
-            var ml   = isO ? '🌐 En ligne' : '🏢 Présentiel';
-            var loc  = isO ? (ev.meetingLink||'') : (ev.lieu||'');
-
-            html += '<div class="ev-block" id="evBlock_'+ev.id+'">'
-                +'<div class="ev-header" onclick="toggleBlock('+ev.id+')">'
-                +'<div class="ev-info">'
-                +'<div class="ev-icon">📅</div>'
-                +'<div class="ev-text">'
-                +'<p class="ev-titre">'+esc(ev.titre)+'</p>'
-                +'<div class="ev-meta">'
-                +'<span class="mode-tag '+mc+'">'+ml+'</span>'
-                +(loc?'<span>📍 '+esc(loc)+'</span>':'')
-                +(ev.dateDebut?'<span>🗓 '+fmtDate(ev.dateDebut)+'</span>':'')
-                +'</div>'
-                +'</div>'
-                +'</div>'
-                +'<div class="ev-header-actions" onclick="event.stopPropagation()">'
-                +'<span class="inv-count">'+invs.length+' invitation'+(invs.length!==1?'s':'')+'</span>'
-                +'<button class="btn success xs" onclick="toggleForm('+ev.id+')">✉️ Ajouter invitation</button>'
-                +'<button class="btn ghost xs" onclick="openQr('+ev.id+')" style="border-color:rgba(29,78,216,.25);color:var(--primary)">📱 QR Code</button>'
-                +'</div>'
-                +'<span class="toggle-icon open" id="toggleIcon_'+ev.id+'">▼</span>'
-                +'</div>'
-
-                +'<div class="ev-body expanded" id="evBody_'+ev.id+'">'
-                +'<div class="inv-form" id="invForm_'+ev.id+'" style="display:none">'
-                +'<p class="inv-form-title">✉️ Nouvelle invitation pour <em>'+esc(ev.titre)+'</em></p>'
-                +'<div class="form-grid">'
-                +'<div class="ff">'
-                +'<label>Email <span style="color:var(--danger)">*</span></label>'
-                +'<input type="email" id="fEmail_'+ev.id+'" placeholder="contact@exemple.com"'
-                +' oninput="va('+ev.id+',\'fEmail\')" onblur="va('+ev.id+',\'fEmail\')"/>'
-                +'<div class="f-msg" id="fmsg_fEmail_'+ev.id+'"></div>'
-                +'</div>'
-                +'<div class="ff">'
-                +'<label>Rôle invité</label>'
-                +'<input type="text" id="fRole_'+ev.id+'" placeholder="Investisseur, Partenaire…"'
-                +' oninput="va('+ev.id+',\'fRole\')" onblur="va('+ev.id+',\'fRole\')"/>'
-                +'<div class="f-msg" id="fmsg_fRole_'+ev.id+'"></div>'
-                +'</div>'
-                +'<div class="ff">'
-                +'<label>Date invitation <span style="color:var(--danger)">*</span></label>'
-                +'<input type="datetime-local" id="fDate_'+ev.id+'"'
-                +' onchange="va('+ev.id+',\'fDate\')" onblur="va('+ev.id+',\'fDate\')"/>'
-                +'<div class="f-msg" id="fmsg_fDate_'+ev.id+'"></div>'
-                +'</div>'
-                +'</div>'
-                +'<div class="f-msg err" id="fGlobal_'+ev.id+'" style="margin-top:8px"></div>'
-                +'<div class="form-btn-row">'
-                +'<button class="btn ghost xs" onclick="toggleForm('+ev.id+')">Annuler</button>'
-                +'<button class="btn primary" onclick="submitAjouter('+ev.id+')">➕ Ajouter</button>'
-                +'</div>'
-                +'</div>'
-                +'<div class="inv-list" id="invList_'+ev.id+'">'+buildInvList(invs)+'</div>'
-                +(!isO && ev.lieu ? buildMapBlock(ev.id, ev.lieu) : '')
-                +'</div>'
-                +'</div>';
-        }
-        g('mainContent').innerHTML = html;
-        setTimeout(initMaps, 100);
-    }
-
-    function buildInvList(invs) {
-        if (!invs || invs.length === 0)
-            return '<div class="inv-empty">Aucune invitation pour cet événement</div>';
-        var html = '';
-        for (var j = 0; j < invs.length; j++) {
-            var inv = invs[j];
-            html += '<div class="inv-item" id="invItem_'+inv.id+'">'
-                +'<div class="inv-item-info">'
-                +'<div class="inv-email"><span class="inv-email-dot"></span>'+esc(inv.email)+'</div>'
-                +'<div class="inv-details">'
-                +(inv.roleInvite?'<span class="inv-detail">🏷 '+esc(inv.roleInvite)+'</span>':'')
-                +(inv.dateInvitation?'<span class="inv-detail">📅 '+fmtDate(inv.dateInvitation)+'</span>':'')
-                +'</div>'
-                +'</div>'
-                +'<div class="inv-actions">'
-                +'<button class="btn warning xs" onclick="openModifier('+inv.id+')">✏️ Modifier</button>'
-                +'<button class="btn danger  xs" onclick="openSupprimer('+inv.id+')">🗑️ Supprimer</button>'
-                +'</div>'
-                +'</div>';
-        }
-        return html;
-    }
-
-    // ══════════════════════════════════════════════
-    //  TOGGLE
-    // ══════════════════════════════════════════════
-    function toggleBlock(evId) {
-        var body = g('evBody_'+evId), icon = g('toggleIcon_'+evId);
-        var open = body.classList.contains('expanded');
-        body.classList.toggle('expanded', !open);
-        body.classList.toggle('collapsed', open);
-        icon.classList.toggle('open', !open);
-    }
-    function toggleForm(evId) {
-        var form = g('invForm_'+evId);
-        form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        var body = g('evBody_'+evId);
-        if (body.classList.contains('collapsed')) toggleBlock(evId);
-        if (form.style.display === 'block') resetAjoutForm(evId);
-    }
-    function resetAjoutForm(evId) {
-        var fields = ['fEmail','fRole','fDate'];
-        fields.forEach(function(f) {
-            var el = g(f+'_'+evId); var msg = g('fmsg_'+f+'_'+evId);
-            if (el)  { el.value = ''; el.classList.remove('f-err','f-ok'); }
-            if (msg) { msg.className = 'f-msg'; msg.textContent = ''; }
-        });
-        var glob = g('fGlobal_'+evId);
-        if (glob) glob.textContent = '';
-    }
-
-    // ══════════════════════════════════════════════
-    //  VALIDATION — FORMULAIRE AJOUT
-    // ══════════════════════════════════════════════
-    var AJOUT_RULES = {
-        fEmail : { required:true,  isEmail:true,            label:'Email' },
-        fRole  : { required:false, minLen:2, maxLen:60,     label:'Rôle' },
-        fDate  : { required:true,  isDate:true,             label:'Date d\'invitation' }
-    };
-
-    function va(evId, prefix) {
-        var el  = g(prefix + '_' + evId);
-        var msg = g('fmsg_' + prefix + '_' + evId);
-        if (!el || !msg) return true;
-        var val  = (el.value || '').trim();
-        var rule = AJOUT_RULES[prefix];
-        if (!rule) return true;
-
-        if (rule.required && !val) return setF(el, msg, false, '⚠️ ' + rule.label + ' obligatoire.');
-        if (!val) { return clearF(el, msg); }
-        if (rule.isEmail && !isEmail(val)) return setF(el, msg, false, '⚠️ Adresse email invalide.');
-        if (rule.isDate && !el.value)      return setF(el, msg, false, '⚠️ Date obligatoire.');
-        if (rule.minLen && val.length < rule.minLen) return setF(el, msg, false, '⚠️ Minimum '+rule.minLen+' caractères.');
-        if (rule.maxLen && val.length > rule.maxLen) return setF(el, msg, false, '⚠️ Maximum '+rule.maxLen+' caractères.');
-        return setF(el, msg, true, '✓');
-    }
-
-    function vaAll(evId) {
-        var ok = true;
-        Object.keys(AJOUT_RULES).forEach(function(prefix) {
-            if (!va(evId, prefix)) ok = false;
-        });
-        return ok;
-    }
-
-    // ══════════════════════════════════════════════
-    //  VALIDATION — MODAL MODIFIER
-    // ══════════════════════════════════════════════
-    function vm(id) {
-        var el  = g(id);
-        var msg = g('msg_' + id);
-        if (!el || !msg) return true;
-        var val  = (el.value || '').trim();
-        var rule = MODAL_RULES[id];
-        if (!rule) return true;
-
-        if (rule.required && !val) return setF(el, msg, false, '⚠️ ' + rule.label + ' obligatoire.');
-        if (!val) { return clearF(el, msg); }
-        if (rule.isEmail && !isEmail(val)) return setF(el, msg, false, '⚠️ Adresse email invalide.');
-        if (rule.isDate && !el.value)      return setF(el, msg, false, '⚠️ Date obligatoire.');
-        if (rule.minLen && val.length < rule.minLen) return setF(el, msg, false, '⚠️ Minimum '+rule.minLen+' caractères.');
-        if (rule.maxLen && val.length > rule.maxLen) return setF(el, msg, false, '⚠️ Maximum '+rule.maxLen+' caractères.');
-        return setF(el, msg, true, '✓');
-    }
-
-    function vmAll() {
-        var ok = true;
-        Object.keys(MODAL_RULES).forEach(function(id) { if (!vm(id)) ok = false; });
-        return ok;
-    }
-
-    function setF(el, msg, isOk, text) {
-        el.classList.toggle('f-ok',  isOk);
-        el.classList.toggle('f-err', !isOk);
-        msg.textContent = text;
-        msg.className   = 'f-msg ' + (isOk ? 'ok' : 'err');
-        return isOk;
-    }
-    function clearF(el, msg) {
-        el.classList.remove('f-ok','f-err');
-        msg.className = 'f-msg'; msg.textContent = '';
-        return true;
-    }
-    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-    // ══════════════════════════════════════════════
-    //  AJOUTER INVITATION
-    // ══════════════════════════════════════════════
-    function submitAjouter(evId) {
-        var globEl = g('fGlobal_' + evId);
-        globEl.textContent = '';
-
-        if (!vaAll(evId)) {
-            globEl.textContent = '⚠️ Corrigez les erreurs avant d\'ajouter.';
-            return;
-        }
-
-        var email = g('fEmail_' + evId).value.trim();
-        var role  = g('fRole_'  + evId).value.trim();
-        var date  = g('fDate_'  + evId).value;
-
-        if (!window.invBridge || typeof window.invBridge.ajouterInvitation !== 'function') {
-            globEl.textContent = '⚠️ Bridge indisponible.'; return;
-        }
-
-        var result = window.invBridge.ajouterInvitation(evId, fmtJava(date), role, email);
-        if (result === 'OK' || (result && result.startsWith('OK'))) {
-            toggleForm(evId);
-            toast('✅ Invitation ajoutée !', 'success');
-            reloadAll();
-        } else {
-            globEl.textContent = '❌ ' + (result || 'Erreur inconnue');
-        }
-    }
-
-    // ══════════════════════════════════════════════
-    //  MODIFIER INVITATION
-    // ══════════════════════════════════════════════
-    function openModifier(invId) {
-        var inv = invMap[invId];
-        if (!inv) { toast('Invitation introuvable', 'error'); return; }
-
-        g('mInvId').value = inv.id;
-        g('mEvId').value  = inv.evenementId;
-        g('mEmail').value = inv.email      || '';
-        g('mRole').value  = inv.roleInvite || '';
-        g('mDate').value  = inv.dateInvitation ? inv.dateInvitation.replace(' ','T').substring(0,16) : '';
-
-        Object.keys(MODAL_RULES).forEach(function(id) {
-            var el = g(id); if (el) { el.classList.remove('f-ok','f-err'); }
-            var msg = g('msg_'+id); if (msg) { msg.className='f-msg'; msg.textContent=''; }
-        });
-        if (inv.email)          vm('mEmail');
-        if (inv.dateInvitation) vm('mDate');
-
-        g('modalAlert').className = 'modal-alert';
-        g('modalAlert').textContent = '';
-        g('modalOverlay').classList.add('show');
-    }
-
-    function closeModal() {
-        g('modalOverlay').classList.remove('show');
-        ['mEmail','mRole','mDate'].forEach(function(id) {
-            var el = g(id); if(el){ el.classList.remove('f-ok','f-err'); }
-            var msg = g('msg_'+id); if(msg){ msg.className='f-msg'; msg.textContent=''; }
-        });
-    }
-
-    function submitModifier() {
-        var alertEl = g('modalAlert');
-        alertEl.className = 'modal-alert'; alertEl.textContent = '';
-
-        if (!vmAll()) {
-            alertEl.className = 'modal-alert error';
-            alertEl.textContent = '⚠️ Corrigez les erreurs avant d\'enregistrer.';
-            return;
-        }
-
-        var id    = parseInt(g('mInvId').value);
-        var evId  = parseInt(g('mEvId').value);
-        var email = g('mEmail').value.trim();
-        var role  = g('mRole').value.trim();
-        var date  = g('mDate').value;
-
-        if (!window.invBridge || typeof window.invBridge.modifierInvitation !== 'function') {
-            alertEl.className = 'modal-alert error';
-            alertEl.textContent = 'Bridge indisponible.'; return;
-        }
-
-        var result = window.invBridge.modifierInvitation(id, evId, fmtJava(date), role, email);
-        if (result === 'OK' || (result && result.startsWith('OK'))) {
-            closeModal();
-            toast('✅ Invitation modifiée !', 'success');
-            reloadAll();
-        } else {
-            alertEl.className = 'modal-alert error';
-            alertEl.textContent = '❌ ' + (result || 'Erreur inconnue');
-        }
-    }
-
-    // ══════════════════════════════════════════════
-    //  SUPPRIMER
-    // ══════════════════════════════════════════════
-    function openSupprimer(invId) {
-        var inv = invMap[invId];
-        pendingDelId = invId;
-        g('dialogMsg').textContent = 'Supprimer l\'invitation de « ' + (inv ? inv.email : '?') + ' » ?';
-        g('dialogOverlay').classList.add('show');
-    }
-    function closeDialog() { g('dialogOverlay').classList.remove('show'); }
-    function confirmSupprimer() {
-        closeDialog();
-        if (!window.invBridge || typeof window.invBridge.supprimerInvitation !== 'function') {
-            toast('Bridge indisponible.', 'error'); return;
-        }
-        var result = window.invBridge.supprimerInvitation(pendingDelId);
-        if (result === 'OK' || (result && result.startsWith('OK'))) {
-            toast('🗑️ Invitation supprimée.', 'success'); reloadAll();
-        } else {
-            toast('❌ ' + (result || 'Erreur'), 'error');
-        }
-    }
-
-    // ══════════════════════════════════════════════
-    //  RELOAD
-    // ══════════════════════════════════════════════
-    function reloadAll() {
-        if (window.invBridge && typeof window.invBridge.getAllData === 'function') {
-            renderAll(window.invBridge.getAllData());
-        }
-    }
-
-    // ══════════════════════════════════════════════
-    //  RECHERCHE
-    // ══════════════════════════════════════════════
-    function filterAll() {
-        var q = g('searchInput').value.toLowerCase().trim();
-        if (!q) { renderBlocks(allData); g('countTotal').textContent = allData.length+' événement(s)'; return; }
-        var filtered = [];
-        for (var i = 0; i < allData.length; i++) {
-            var ev   = allData[i].evenement;
-            var invs = allData[i].invitations;
-            var evMatch = (ev.titre||'').toLowerCase().indexOf(q) >= 0;
-            var filtInvs = invs.filter(function(inv) {
-                return (inv.email||'').toLowerCase().indexOf(q)>=0 || (inv.roleInvite||'').toLowerCase().indexOf(q)>=0;
-            });
-            if (evMatch || filtInvs.length > 0)
-                filtered.push({ evenement: ev, invitations: evMatch ? invs : filtInvs });
-        }
-        g('countTotal').textContent = filtered.length + ' événement(s)';
-        g('stateEmpty').style.display = filtered.length === 0 ? 'block' : 'none';
-        renderBlocks(filtered);
-    }
-
-    // ══════════════════════════════════════════════
-    //  MAP — Leaflet + OpenStreetMap + Nominatim
-    // ══════════════════════════════════════════════
-    var mapInstances = {};
-
-    function buildMapBlock(evId, lieu) {
-        return '<div class="ev-map-wrap">'
-            +'<div class="ev-map-loading" id="mapLoading_'+evId+'">🗺️ Chargement de la carte…</div>'
-            +'<div id="map_'+evId+'" style="height:150px;width:100%;display:none"></div>'
-            +'</div>'
-            +'<a class="btn-itineraire" id="itineraire_'+evId+'" href="#" target="_blank">'
-            +'🧭 Voir l itinéraire</a>';
-    }
-
-    function initMaps() {
-        var els = document.querySelectorAll('[id^="mapLoading_"]');
-        els.forEach(function(el) {
-            var evId = el.id.replace('mapLoading_','');
-            if (mapInstances[evId]) return;
-            var entry = null;
-            for (var i=0;i<allData.length;i++) {
-                if (String(allData[i].evenement.id) === String(evId)) { entry = allData[i]; break; }
-            }
-            if (!entry || !entry.evenement.lieu) return;
-            geocodeAndShow(evId, entry.evenement.lieu);
-        });
-    }
-
-    function geocodeAndShow(evId, lieu) {
-        var url = 'https://nominatim.openstreetmap.org/search?format=json&q='
-            + encodeURIComponent(lieu + ', Tunisie') + '&limit=1';
-
-        fetch(url, { headers: {'Accept-Language':'fr'} })
-            .then(function(r){ return r.json(); })
-            .then(function(data) {
-                var loadEl = document.getElementById('mapLoading_'+evId);
-                var mapEl  = document.getElementById('map_'+evId);
-                var btnEl  = document.getElementById('itineraire_'+evId);
-
-                if (!data || data.length === 0) {
-                    if (loadEl) loadEl.innerHTML = '📍 Carte indisponible pour ce lieu';
-                    return;
-                }
-
-                var lat = parseFloat(data[0].lat);
-                var lng = parseFloat(data[0].lon);
-
-                if (loadEl) loadEl.style.display = 'none';
-                if (mapEl)  mapEl.style.display  = 'block';
-
-                var map = L.map('map_'+evId, {
-                    center:[lat,lng], zoom:15,
-                    zoomControl:true, scrollWheelZoom:false
-                });
-
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution:'© OpenStreetMap', maxZoom:19
-                }).addTo(map);
-
-                var icon = L.divIcon({
-                    html:'<div style="background:linear-gradient(135deg,#1d4ed8,#06b6d4);width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 4px 12px rgba(29,78,216,.4)"></div>',
-                    iconSize:[30,30], iconAnchor:[15,30], className:''
-                });
-
-                L.marker([lat,lng],{icon:icon}).addTo(map)
-                    .bindPopup('<strong>📍 '+lieu+'</strong>').openPopup();
-
-                mapInstances[evId] = map;
-
-                if (btnEl) {
-                    btnEl.href = 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng;
-                    btnEl.style.display = 'flex';
-                }
-            })
-            .catch(function(){
-                var loadEl = document.getElementById('mapLoading_'+evId);
-                if (loadEl) loadEl.innerHTML = '⚠️ Impossible de charger la carte';
-            });
-    }
-
-    // ══════════════════════════════════════════════
-    //  UTILS
-    // ══════════════════════════════════════════════
-    function g(id) { return document.getElementById(id); }
-
-    function fmtJava(s) {
-        if (!s) return '';
-        var p = s.split('T');
-        return p[0] + ' ' + ((p[1]||'00:00').substring(0,5)) + ':00';
-    }
-
-    function fmtDate(s) {
-        if (!s) return '—';
-        try {
-            var d = new Date(s.replace(' ','T'));
-            return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
-        } catch(e) { return s; }
-    }
-
-    function esc(s) {
-        if (!s) return '';
-        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
-    var _tt;
-    function toast(msg, type) {
-        var t = g('toast'); g('toastMsg').textContent = msg;
-        t.className = 'show ' + (type||'success');
-        clearTimeout(_tt); _tt = setTimeout(function(){ t.className = type||'success'; }, 3500);
-    }
-
-    g('modalOverlay').addEventListener('click',  function(e){ if(e.target===this) closeModal(); });
-    g('dialogOverlay').addEventListener('click', function(e){ if(e.target===this) closeDialog(); });
-
-    // ══════════════════════════════════════════════
-    //  QR CODE — par événement
-    // ══════════════════════════════════════════════
-    var qrInstance = null;
-
-    function openQr(evId) {
-        var entry = null;
-        for (var i = 0; i < allData.length; i++) {
-            if (String(allData[i].evenement.id) === String(evId)) { entry = allData[i]; break; }
-        }
-        if (!entry) { toast('Données introuvables', 'error'); return; }
-
-        var ev   = entry.evenement;
-        var invs = entry.invitations;
-
-        g('qrEvName').textContent = ev.titre;
-        g('qrOverlay').setAttribute('data-titre', ev.titre);
-        g('qrEvSub').textContent  = invs.length + ' invité(s) — ' + (ev.mode === 'EN_LIGNE' ? '🌐 En ligne' : '🏢 Présentiel');
-        g('qrCount').textContent  = invs.length === 0
-            ? 'Aucun invité pour cet événement'
-            : invs.length + ' invité(s) encodé(s) dans le QR Code';
-
-        var listHtml = '';
-        if (invs.length === 0) {
-            listHtml = '<div class="qr-empty-inv">📭 Aucune invitation pour cet événement</div>';
-        } else {
-            for (var j = 0; j < invs.length; j++) {
-                var inv = invs[j];
-                listHtml += '<div class="qr-invite-row">'
-                    + '<span class="qr-invite-dot"></span>'
-                    + '<span class="qr-invite-email">' + esc(inv.email) + '</span>'
-                    + (inv.roleInvite ? '<span class="qr-invite-role">' + esc(inv.roleInvite) + '</span>' : '')
-                    + '</div>';
-            }
-        }
-        g('qrInvitesList').innerHTML = listHtml;
-        g('qrCanvas').innerHTML = '<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:13px">⏳ Génération...</div>';
-
-        if (window.invBridge && typeof window.invBridge.generateQr === 'function') {
-            var content = buildQrContent(ev, invs);
-            window.invBridge.generateQr(content);
-        } else {
-            toast('Bridge indisponible', 'error'); return;
-        }
-
-        g('qrOverlay').classList.add('show');
-    }
-
-    function showQrImage(base64Png) {
-        g('qrCanvas').innerHTML =
-            '<img src="data:image/png;base64,' + base64Png + '"'
-            + ' width="220" height="220" style="display:block;border-radius:8px"/>';
-    }
-
-    function buildQrContent(ev, invs) {
-        var lines = [];
-        lines.push('=== INVESTIA — ÉVÉNEMENT ===');
-        lines.push('Titre    : ' + (ev.titre || '—'));
-        lines.push('Mode     : ' + (ev.mode === 'EN_LIGNE' ? 'En ligne' : 'Présentiel'));
-        if (ev.mode === 'EN_LIGNE' && ev.meetingLink)  lines.push('Lien     : ' + ev.meetingLink);
-        if (ev.mode === 'PRESENTIEL' && ev.lieu)        lines.push('Lieu     : ' + ev.lieu);
-        if (ev.dateDebut) lines.push('Début    : ' + fmtDate(ev.dateDebut));
-        if (ev.dateFin)   lines.push('Fin      : ' + fmtDate(ev.dateFin));
-        lines.push('');
-        lines.push('=== LISTE DES INVITÉS (' + invs.length + ') ===');
-        for (var i = 0; i < invs.length; i++) {
-            var inv = invs[i];
-            var line = (i + 1) + '. ' + inv.email;
-            if (inv.roleInvite) line += ' (' + inv.roleInvite + ')';
-            lines.push(line);
-        }
-        lines.push('');
-        lines.push('Généré par Investia');
-        return lines.join('\n');
-    }
-
-    function closeQr() {
-        g('qrOverlay').classList.remove('show');
-        qrInstance = null;
-    }
-
-    function downloadQr() {
-        var img = g('qrCanvas').querySelector('img');
-        if (!img) { toast('QR Code non encore généré', 'error'); return; }
-        var titre = g('qrOverlay').getAttribute('data-titre') || 'evenement';
-        if (window.invBridge && typeof window.invBridge.downloadQr === 'function') {
-            window.invBridge.downloadQr(titre);
-        } else {
-            toast('Bridge indisponible', 'error');
-        }
-    }
-
-    g('qrOverlay').addEventListener('click', function(e){ if(e.target===this) closeQr(); });
-
-</script>
-
-<!-- ══ QR CODE MODAL ══ -->
+<!-- QR MODAL -->
 <div class="qr-overlay" id="qrOverlay">
     <div class="qr-modal">
         <div class="qr-modal-header">
@@ -894,19 +249,394 @@
         </div>
         <div class="qr-modal-body">
             <p class="qr-ev-name" id="qrEvName">Événement</p>
-            <p class="qr-ev-sub" id="qrEvSub">Scannez pour voir la liste des invités</p>
-            <div class="qr-box">
-                <div id="qrCanvas"></div>
-            </div>
+            <p class="qr-ev-sub"  id="qrEvSub">Scannez pour voir la liste des invités</p>
+            <div class="qr-box"><div id="qrCanvas"></div></div>
             <p class="qr-invites-count" id="qrCount"></p>
             <div class="qr-invites-list" id="qrInvitesList"></div>
         </div>
         <div class="qr-modal-footer">
-            <button class="btn-qr ghost" onclick="closeQr()">Fermer</button>
+            <button class="btn-qr ghost"   onclick="closeQr()">Fermer</button>
             <button class="btn-qr primary" onclick="downloadQr()">⬇️ Télécharger</button>
         </div>
     </div>
 </div>
 
+<script>
+    /* ═══════════════════════════════════════════════════
+       CUSTOM DATETIME PICKER
+    ═══════════════════════════════════════════════════ */
+    var DP_MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    var DP_DAYS=['Lu','Ma','Me','Je','Ve','Sa','Di'];
+    var _dp_open=null;
+
+    function dp_injectCss(){
+        if(document.getElementById('dp-style'))return;
+        var s=document.createElement('style');s.id='dp-style';
+        s.textContent=[
+            '.dp-wrap{position:relative;display:flex;gap:6px;align-items:center}',
+            '.dp-display{flex:1;padding:9px 11px;border:1px solid rgba(15,23,42,.10);border-radius:10px;background:#fff;font-size:13.5px;color:#0f172a;cursor:pointer;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}',
+            '.dp-display:focus,.dp-display:hover{border-color:rgba(29,78,216,.35);box-shadow:0 0 0 3px rgba(29,78,216,.10)}',
+            '.dp-display.f-err{border-color:rgba(239,68,68,.55)!important;box-shadow:0 0 0 3px rgba(239,68,68,.10)!important}',
+            '.dp-display.f-ok{border-color:rgba(22,163,74,.45)!important;box-shadow:0 0 0 3px rgba(22,163,74,.08)!important}',
+            '.dp-btn{padding:8px 11px;border:1px solid rgba(15,23,42,.10);border-radius:10px;background:#fff;cursor:pointer;font-size:15px;flex-shrink:0;transition:background .15s}',
+            '.dp-btn:hover{background:#f1f5f9}',
+            '.dp-popup{position:absolute;top:calc(100% + 6px);left:0;z-index:9999;background:#fff;border:1px solid rgba(15,23,42,.12);border-radius:16px;box-shadow:0 20px 50px rgba(15,23,42,.18);padding:16px;min-width:290px;display:none}',
+            '.dp-popup.open{display:block}',
+            '.dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}',
+            '.dp-head-label{font-size:14px;font-weight:900;color:#0b2a55}',
+            '.dp-nav{width:30px;height:30px;border-radius:8px;border:1px solid rgba(15,23,42,.10);background:#f8fafc;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:background .15s}',
+            '.dp-nav:hover{background:#e2e8f0}',
+            '.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:12px}',
+            '.dp-dow{text-align:center;font-size:10px;font-weight:900;color:#64748b;padding:4px 0}',
+            '.dp-day{text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#0f172a;transition:background .12s;border:none;background:none;width:100%}',
+            '.dp-day:hover{background:rgba(29,78,216,.08);color:#1d4ed8}',
+            '.dp-day.today{border:2px solid rgba(29,78,216,.4);color:#1d4ed8;font-weight:900}',
+            '.dp-day.selected{background:linear-gradient(135deg,#1d4ed8,#06b6d4)!important;color:#fff!important;font-weight:900}',
+            '.dp-day.other-month{color:#cbd5e1}',
+            '.dp-day.disabled{color:#e2e8f0!important;cursor:not-allowed!important;pointer-events:none}',
+            '.dp-divider{height:1px;background:rgba(15,23,42,.08);margin:12px 0}',
+            '.dp-time-row{display:flex;align-items:center;justify-content:center;gap:10px}',
+            '.dp-time-label{font-size:11px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:.5px}',
+            '.dp-time-wrap{display:flex;align-items:center;gap:6px}',
+            '.dp-time-sel{width:64px;padding:7px 8px;border:1px solid rgba(15,23,42,.10);border-radius:10px;background:#f8fafc;font-size:15px;font-weight:900;color:#0f172a;text-align:center;cursor:pointer;outline:none;font-family:inherit}',
+            '.dp-time-colon{font-size:20px;font-weight:900;color:#64748b}',
+            '.dp-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}',
+            '.dp-clear{padding:7px 14px;border-radius:8px;border:1px solid rgba(15,23,42,.10);background:#fff;font-size:12px;font-weight:700;cursor:pointer;color:#64748b}',
+            '.dp-ok{padding:7px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#1d4ed8,#06b6d4);color:#fff;font-size:13px;font-weight:800;cursor:pointer}',
+            '.dp-clear:hover{background:#f1f5f9}','.dp-ok:hover{filter:brightness(1.06)}'
+        ].join('');
+        document.head.appendChild(s);
+    }
+
+    function dp_init(id, onChangeFn, allowPast){
+        dp_injectCss();
+        var hidden=document.getElementById(id);
+        var container=document.getElementById('dp_'+id);
+        if(!hidden||!container)return;
+        var state={year:new Date().getFullYear(),month:new Date().getMonth(),selYear:null,selMonth:null,selDay:null,hour:9,minute:0};
+        if(hidden.value){var d=new Date(hidden.value.replace(' ','T'));if(!isNaN(d)){state.year=d.getFullYear();state.month=d.getMonth();state.selYear=d.getFullYear();state.selMonth=d.getMonth();state.selDay=d.getDate();state.hour=d.getHours();state.minute=d.getMinutes();}}
+        container.innerHTML='<div class="dp-wrap" id="dpWrap_'+id+'"><input type="text" class="dp-display" id="dpDisp_'+id+'" readonly placeholder="jj/mm/aaaa hh:mm"/><button type="button" class="dp-btn" id="dpBtn_'+id+'">📅</button><div class="dp-popup" id="dpPop_'+id+'"><div class="dp-head"><button type="button" class="dp-nav" id="dpPrev_'+id+'">◀</button><span class="dp-head-label" id="dpLbl_'+id+'"></span><button type="button" class="dp-nav" id="dpNext_'+id+'">▶</button></div><div class="dp-grid" id="dpGrid_'+id+'"></div><div class="dp-divider"></div><div class="dp-time-row"><span class="dp-time-label">🕐 Heure</span><div class="dp-time-wrap"><select class="dp-time-sel" id="dpH_'+id+'"></select><span class="dp-time-colon">:</span><select class="dp-time-sel" id="dpM_'+id+'"></select></div></div><div class="dp-footer"><button type="button" class="dp-clear" id="dpClr_'+id+'">Effacer</button><button type="button" class="dp-ok" id="dpOk_'+id+'">✓ OK</button></div></div></div>';
+        var selH=document.getElementById('dpH_'+id),selM=document.getElementById('dpM_'+id);
+        for(var h=0;h<24;h++){var o=document.createElement('option');o.value=h;o.textContent=(h<10?'0':'')+h;if(h===state.hour)o.selected=true;selH.appendChild(o);}
+        for(var m=0;m<60;m+=5){var o2=document.createElement('option');o2.value=m;o2.textContent=(m<10?'0':'')+m;if(m===state.minute)o2.selected=true;selM.appendChild(o2);}
+        function renderCal(){
+            var lbl=document.getElementById('dpLbl_'+id),grid=document.getElementById('dpGrid_'+id);
+            lbl.textContent=DP_MONTHS[state.month]+' '+state.year;
+            var today=new Date();today.setHours(0,0,0,0);
+            var html='';
+            DP_DAYS.forEach(function(d){html+='<div class="dp-dow">'+d+'</div>';});
+            var first=new Date(state.year,state.month,1);
+            var offset=(first.getDay()+6)%7;
+            var days=new Date(state.year,state.month+1,0).getDate();
+            for(var i=0;i<offset;i++){var pv=new Date(state.year,state.month,0-i);html+='<button type="button" class="dp-day other-month disabled">'+pv.getDate()+'</button>';}
+            for(var d2=1;d2<=days;d2++){
+                var dt=new Date(state.year,state.month,d2);
+                var cls='dp-day';
+                // Pour invitations on autorise les dates passées (allowPast=true)
+                if(!allowPast && dt<today) cls+=' disabled';
+                if(dt.getTime()===today.getTime())cls+=' today';
+                if(state.selYear===state.year&&state.selMonth===state.month&&state.selDay===d2)cls+=' selected';
+                html+='<button type="button" class="'+cls+'" data-d="'+d2+'">'+d2+'</button>';
+            }
+            grid.innerHTML=html;
+            var btns=grid.querySelectorAll('.dp-day:not(.disabled):not(.other-month)');
+            for(var b=0;b<btns.length;b++){(function(btn){btn.addEventListener('click',function(){state.selYear=state.year;state.selMonth=state.month;state.selDay=parseInt(btn.getAttribute('data-d'));renderCal();});})(btns[b]);}
+        }
+        function getHiddenVal(){if(state.selDay===null)return'';var mm=state.selMonth+1;var h=parseInt(selH.value);var m=parseInt(selM.value);return state.selYear+'-'+(mm<10?'0':'')+mm+'-'+(state.selDay<10?'0':'')+state.selDay+'T'+(h<10?'0':'')+h+':'+(m<10?'0':'')+m;}
+        function getDispVal(){if(state.selDay===null)return'';var mm=state.selMonth+1;var h=parseInt(selH.value);var m=parseInt(selM.value);return(state.selDay<10?'0':'')+state.selDay+'/'+(mm<10?'0':'')+mm+'/'+state.selYear+' '+(h<10?'0':'')+h+':'+(m<10?'0':'')+m;}
+        function commit(){hidden.value=getHiddenVal();document.getElementById('dpDisp_'+id).value=getDispVal();dp_close(id);if(onChangeFn)onChangeFn();}
+        function open(){if(_dp_open&&_dp_open!==id)dp_close(_dp_open);_dp_open=id;renderCal();document.getElementById('dpPop_'+id).classList.add('open');}
+        document.getElementById('dpPrev_'+id).addEventListener('click',function(){state.month--;if(state.month<0){state.month=11;state.year--;}renderCal();});
+        document.getElementById('dpNext_'+id).addEventListener('click',function(){state.month++;if(state.month>11){state.month=0;state.year++;}renderCal();});
+        document.getElementById('dpBtn_'+id).addEventListener('click',function(e){e.stopPropagation();open();});
+        document.getElementById('dpDisp_'+id).addEventListener('click',function(e){e.stopPropagation();open();});
+        document.getElementById('dpOk_'+id).addEventListener('click',function(){commit();});
+        document.getElementById('dpClr_'+id).addEventListener('click',function(){state.selDay=null;hidden.value='';document.getElementById('dpDisp_'+id).value='';dp_close(id);if(onChangeFn)onChangeFn();});
+        if(state.selDay!==null)document.getElementById('dpDisp_'+id).value=getDispVal();
+        window['dp_set_'+id]=function(val){
+            if(!val){state.selDay=null;hidden.value='';document.getElementById('dpDisp_'+id).value='';return;}
+            var d=new Date(val.replace(' ','T'));if(isNaN(d))return;
+            state.year=d.getFullYear();state.month=d.getMonth();state.selYear=d.getFullYear();state.selMonth=d.getMonth();state.selDay=d.getDate();state.hour=d.getHours();state.minute=d.getMinutes();
+            hidden.value=getHiddenVal();document.getElementById('dpDisp_'+id).value=getDispVal();
+            var sh=document.getElementById('dpH_'+id),sm=document.getElementById('dpM_'+id);
+            if(sh)for(var i=0;i<sh.options.length;i++)sh.options[i].selected=(parseInt(sh.options[i].value)===state.hour);
+            if(sm)for(var i=0;i<sm.options.length;i++)sm.options[i].selected=(parseInt(sm.options[i].value)===state.minute);
+        };
+    }
+    function dp_close(id){var pop=document.getElementById('dpPop_'+id);if(pop)pop.classList.remove('open');if(_dp_open===id)_dp_open=null;}
+    document.addEventListener('click',function(e){if(!_dp_open)return;var pop=document.getElementById('dpPop_'+_dp_open);if(pop&&!pop.contains(e.target))dp_close(_dp_open);});
+
+    /* ═══════════════════════════════════════════════════
+       APP
+    ═══════════════════════════════════════════════════ */
+    var allData={};var invMap={};var pendingDelId=null;
+
+    var MODAL_RULES={mEmail:{required:true,isEmail:true,label:'Email'},mRole:{required:false,minLen:2,maxLen:60,label:'Rôle'},mDate:{required:true,isDate:true,label:"Date d'invitation"}};
+
+    function goEvenements(){if(window.invBridge&&typeof window.invBridge.goEvenements==='function')window.invBridge.goEvenements();}
+    function openInBrowser(url){if(window.invBridge&&typeof window.invBridge.openUrl==='function')window.invBridge.openUrl(url);}
+
+    function renderAll(data){
+        if(typeof data==='string'){try{data=JSON.parse(data);}catch(e){data=[];}}
+        allData=data;invMap={};
+        for(var i=0;i<data.length;i++){var invs=data[i].invitations;for(var j=0;j<invs.length;j++)invMap[invs[j].id]=invs[j];}
+        g('stateLoad').style.display='none';
+        g('countTotal').textContent=data.length+' événement(s)';
+        g('stateEmpty').style.display=data.length===0?'block':'none';
+        renderBlocks(data);
+    }
+
+    function renderBlocks(data){
+        if(!data||data.length===0){g('mainContent').innerHTML='';return;}
+        var html='';
+        for(var i=0;i<data.length;i++){
+            var ev=data[i].evenement,invs=data[i].invitations;
+            var isO=ev.mode==='EN_LIGNE',mc=isO?'online':'presentiel',ml=isO?'🌐 En ligne':'🏢 Présentiel';
+            var loc=isO?(ev.meetingLink||''):(ev.lieu||'');
+            html+='<div class="ev-block" id="evBlock_'+ev.id+'">'
+                +'<div class="ev-header" onclick="toggleBlock('+ev.id+')">'
+                +'<div class="ev-info"><div class="ev-icon">📅</div><div class="ev-text">'
+                +'<p class="ev-titre">'+esc(ev.titre)+'</p>'
+                +'<div class="ev-meta"><span class="mode-tag '+mc+'">'+ml+'</span>'
+                +(loc?'<span>📍 '+esc(loc)+'</span>':'')
+                +(ev.dateDebut?'<span>🗓 '+fmtDate(ev.dateDebut)+'</span>':'')
+                +'</div></div></div>'
+                +'<div class="ev-header-actions" onclick="event.stopPropagation()">'
+                +'<span class="inv-count">'+invs.length+' invitation'+(invs.length!==1?'s':'')+'</span>'
+                +'<button class="btn success xs" onclick="toggleForm('+ev.id+')">✉️ Ajouter invitation</button>'
+                +'<button class="btn ghost xs" onclick="openQr('+ev.id+')" style="border-color:rgba(29,78,216,.25);color:var(--primary)">📱 QR Code</button>'
+                +'</div>'
+                +'<span class="toggle-icon open" id="toggleIcon_'+ev.id+'">▼</span>'
+                +'</div>'
+                +'<div class="ev-body expanded" id="evBody_'+ev.id+'">'
+                // ✅ FORM AJOUTER avec custom picker
+                +'<div class="inv-form" id="invForm_'+ev.id+'" style="display:none">'
+                +'<p class="inv-form-title">✉️ Nouvelle invitation pour <em>'+esc(ev.titre)+'</em></p>'
+                +'<div class="form-grid">'
+                +'<div class="ff"><label>Email <span style="color:var(--danger)">*</span></label>'
+                +'<input type="email" id="fEmail_'+ev.id+'" placeholder="contact@exemple.com" oninput="va('+ev.id+',\'fEmail\')" onblur="va('+ev.id+',\'fEmail\')"/>'
+                +'<div class="f-msg" id="fmsg_fEmail_'+ev.id+'"></div></div>'
+                +'<div class="ff"><label>Rôle invité</label>'
+                +'<input type="text" id="fRole_'+ev.id+'" placeholder="Investisseur, Partenaire…" oninput="va('+ev.id+',\'fRole\')" onblur="va('+ev.id+',\'fRole\')"/>'
+                +'<div class="f-msg" id="fmsg_fRole_'+ev.id+'"></div></div>'
+                +'<div class="ff"><label>Date invitation <span style="color:var(--danger)">*</span></label>'
+                +'<input type="hidden" id="fDate_'+ev.id+'"/>'
+                +'<div id="dp_fDate_'+ev.id+'"></div>'
+                +'<div class="f-msg" id="fmsg_fDate_'+ev.id+'"></div></div>'
+                +'</div>'
+                +'<div class="f-msg err" id="fGlobal_'+ev.id+'" style="margin-top:8px"></div>'
+                +'<div class="form-btn-row">'
+                +'<button class="btn ghost xs" onclick="toggleForm('+ev.id+')">Annuler</button>'
+                +'<button class="btn primary" onclick="submitAjouter('+ev.id+')">➕ Ajouter</button>'
+                +'</div></div>'
+                +'<div class="inv-list" id="invList_'+ev.id+'">'+buildInvList(invs)+'</div>'
+                +(!isO&&ev.lieu?buildMapBlock(ev.id,ev.lieu):'')
+                +'</div></div>';
+        }
+        g('mainContent').innerHTML=html;
+        // Initialiser les pickers de chaque formulaire (allowPast=true pour invitations)
+        for(var k=0;k<data.length;k++){
+            (function(evId){
+                dp_init('fDate_'+evId, function(){ va(evId,'fDate'); }, true);
+            })(data[k].evenement.id);
+        }
+        setTimeout(initMaps,100);
+    }
+
+    function buildInvList(invs){
+        if(!invs||invs.length===0)return'<div class="inv-empty">Aucune invitation pour cet événement</div>';
+        var html='';
+        for(var j=0;j<invs.length;j++){
+            var inv=invs[j];
+            html+='<div class="inv-item" id="invItem_'+inv.id+'">'
+                +'<div class="inv-item-info">'
+                +'<div class="inv-email"><span class="inv-email-dot"></span>'+esc(inv.email)+'</div>'
+                +'<div class="inv-details">'
+                +(inv.roleInvite?'<span class="inv-detail">🏷 '+esc(inv.roleInvite)+'</span>':'')
+                +(inv.dateInvitation?'<span class="inv-detail">📅 '+fmtDate(inv.dateInvitation)+'</span>':'')
+                +'</div></div>'
+                +'<div class="inv-actions">'
+                +'<button class="btn warning xs" onclick="openModifier('+inv.id+')">✏️ Modifier</button>'
+                +'<button class="btn danger  xs" onclick="openSupprimer('+inv.id+')">🗑️ Supprimer</button>'
+                +'</div></div>';
+        }
+        return html;
+    }
+
+    function toggleBlock(evId){var body=g('evBody_'+evId),icon=g('toggleIcon_'+evId);var open=body.classList.contains('expanded');body.classList.toggle('expanded',!open);body.classList.toggle('collapsed',open);icon.classList.toggle('open',!open);}
+    function toggleForm(evId){var form=g('invForm_'+evId);form.style.display=form.style.display==='none'?'block':'none';var body=g('evBody_'+evId);if(body.classList.contains('collapsed'))toggleBlock(evId);if(form.style.display==='block')resetAjoutForm(evId);}
+    function resetAjoutForm(evId){
+        ['fEmail','fRole'].forEach(function(f){var el=g(f+'_'+evId),msg=g('fmsg_'+f+'_'+evId);if(el){el.value='';el.classList.remove('f-err','f-ok');}if(msg){msg.className='f-msg';msg.textContent='';}});
+        if(window['dp_set_fDate_'+evId])window['dp_set_fDate_'+evId]('');
+        var msg=g('fmsg_fDate_'+evId);if(msg){msg.className='f-msg';msg.textContent='';}
+        var glob=g('fGlobal_'+evId);if(glob)glob.textContent='';
+    }
+
+    var AJOUT_RULES={fEmail:{required:true,isEmail:true,label:'Email'},fRole:{required:false,minLen:2,maxLen:60,label:'Rôle'},fDate:{required:true,isDate:true,label:"Date d'invitation"}};
+
+    function va(evId,prefix){
+        var fieldId=prefix+'_'+evId;
+        var el=g(fieldId),msg=g('fmsg_'+fieldId);
+        if(!el||!msg)return true;
+        var val=(el.value||'').trim();
+        var rule=AJOUT_RULES[prefix];if(!rule)return true;
+        if(rule.required&&!val){setF(el,msg,false,'⚠️ '+rule.label+' obligatoire.');
+            // Sync dp-display
+            var disp=document.getElementById('dpDisp_'+fieldId);if(disp){disp.classList.add('f-err');disp.classList.remove('f-ok');}
+            return false;}
+        if(!val){clearF(el,msg);return true;}
+        if(rule.isEmail&&!isEmail(val)){setF(el,msg,false,'⚠️ Adresse email invalide.');return false;}
+        if(rule.isDate&&!el.value){setF(el,msg,false,'⚠️ Date obligatoire.');
+            var disp2=document.getElementById('dpDisp_'+fieldId);if(disp2){disp2.classList.add('f-err');disp2.classList.remove('f-ok');}
+            return false;}
+        if(rule.minLen&&val.length<rule.minLen){setF(el,msg,false,'⚠️ Minimum '+rule.minLen+' caractères.');return false;}
+        if(rule.maxLen&&val.length>rule.maxLen){setF(el,msg,false,'⚠️ Maximum '+rule.maxLen+' caractères.');return false;}
+        setF(el,msg,true,'✓');
+        var disp3=document.getElementById('dpDisp_'+fieldId);if(disp3){disp3.classList.add('f-ok');disp3.classList.remove('f-err');}
+        return true;
+    }
+
+    function vaAll(evId){var ok=true;Object.keys(AJOUT_RULES).forEach(function(prefix){if(!va(evId,prefix))ok=false;});return ok;}
+
+    function vm(id){
+        var el=g(id),msg=g('msg_'+id);if(!el||!msg)return true;
+        var val=(el.value||'').trim(),rule=MODAL_RULES[id];if(!rule)return true;
+        if(rule.required&&!val){
+            setF(el,msg,false,'⚠️ '+rule.label+' obligatoire.');
+            if(id==='mDate'){var d=document.getElementById('dpDisp_mDate');if(d){d.classList.add('f-err');d.classList.remove('f-ok');}}
+            return false;}
+        if(!val){clearF(el,msg);return true;}
+        if(rule.isEmail&&!isEmail(val)){setF(el,msg,false,'⚠️ Adresse email invalide.');return false;}
+        if(rule.isDate&&!el.value){setF(el,msg,false,'⚠️ Date obligatoire.');return false;}
+        if(rule.minLen&&val.length<rule.minLen){setF(el,msg,false,'⚠️ Minimum '+rule.minLen+' caractères.');return false;}
+        if(rule.maxLen&&val.length>rule.maxLen){setF(el,msg,false,'⚠️ Maximum '+rule.maxLen+' caractères.');return false;}
+        setF(el,msg,true,'✓');
+        if(id==='mDate'){var d2=document.getElementById('dpDisp_mDate');if(d2){d2.classList.add('f-ok');d2.classList.remove('f-err');}}
+        return true;
+    }
+    function vmAll(){var ok=true;Object.keys(MODAL_RULES).forEach(function(id){if(!vm(id))ok=false;});return ok;}
+
+    function setF(el,msg,isOk,text){el.classList.toggle('f-ok',isOk);el.classList.toggle('f-err',!isOk);msg.textContent=text;msg.className='f-msg '+(isOk?'ok':'err');return isOk;}
+    function clearF(el,msg){el.classList.remove('f-ok','f-err');msg.className='f-msg';msg.textContent='';return true;}
+    function isEmail(v){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
+
+    function submitAjouter(evId){
+        var globEl=g('fGlobal_'+evId);globEl.textContent='';
+        if(!vaAll(evId)){globEl.textContent='⚠️ Corrigez les erreurs avant d\'ajouter.';return;}
+        var email=g('fEmail_'+evId).value.trim();
+        var role=g('fRole_'+evId).value.trim();
+        var date=g('fDate_'+evId).value;
+        if(!window.invBridge||typeof window.invBridge.ajouterInvitation!=='function'){globEl.textContent='⚠️ Bridge indisponible.';return;}
+        var result=window.invBridge.ajouterInvitation(evId,fmtJava(date),role,email);
+        if(result==='OK'||(result&&result.startsWith('OK'))){toggleForm(evId);toast('✅ Invitation ajoutée !','success');reloadAll();}
+        else{globEl.textContent='❌ '+(result||'Erreur inconnue');}
+    }
+
+    function openModifier(invId){
+        var inv=invMap[invId];if(!inv){toast('Invitation introuvable','error');return;}
+        g('mInvId').value=inv.id;g('mEvId').value=inv.evenementId;
+        g('mEmail').value=inv.email||'';g('mRole').value=inv.roleInvite||'';
+        // ✅ Pré-remplir le picker
+        if(window.dp_set_mDate)dp_set_mDate(inv.dateInvitation||'');
+        Object.keys(MODAL_RULES).forEach(function(id){var el=g(id);if(el){el.classList.remove('f-ok','f-err');}var msg=g('msg_'+id);if(msg){msg.className='f-msg';msg.textContent='';}});
+        if(inv.email)vm('mEmail');
+        g('modalAlert').className='modal-alert';g('modalAlert').textContent='';
+        g('modalOverlay').classList.add('show');
+    }
+    function closeModal(){
+        g('modalOverlay').classList.remove('show');
+        ['mEmail','mRole','mDate'].forEach(function(id){var el=g(id);if(el){el.classList.remove('f-ok','f-err');}var msg=g('msg_'+id);if(msg){msg.className='f-msg';msg.textContent='';}});
+    }
+    function submitModifier(){
+        var alertEl=g('modalAlert');alertEl.className='modal-alert';alertEl.textContent='';
+        if(!vmAll()){alertEl.className='modal-alert error';alertEl.textContent='⚠️ Corrigez les erreurs avant d\'enregistrer.';return;}
+        var id=parseInt(g('mInvId').value),evId=parseInt(g('mEvId').value);
+        var email=g('mEmail').value.trim(),role=g('mRole').value.trim(),date=g('mDate').value;
+        if(!window.invBridge||typeof window.invBridge.modifierInvitation!=='function'){alertEl.className='modal-alert error';alertEl.textContent='Bridge indisponible.';return;}
+        var result=window.invBridge.modifierInvitation(id,evId,fmtJava(date),role,email);
+        if(result==='OK'||(result&&result.startsWith('OK'))){closeModal();toast('✅ Invitation modifiée !','success');reloadAll();}
+        else{alertEl.className='modal-alert error';alertEl.textContent='❌ '+(result||'Erreur inconnue');}
+    }
+
+    function openSupprimer(invId){var inv=invMap[invId];pendingDelId=invId;g('dialogMsg').textContent='Supprimer l\'invitation de « '+(inv?inv.email:'?')+' » ?';g('dialogOverlay').classList.add('show');}
+    function closeDialog(){g('dialogOverlay').classList.remove('show');}
+    function confirmSupprimer(){closeDialog();if(!window.invBridge||typeof window.invBridge.supprimerInvitation!=='function'){toast('Bridge indisponible.','error');return;}var result=window.invBridge.supprimerInvitation(pendingDelId);if(result==='OK'||(result&&result.startsWith('OK'))){toast('🗑️ Invitation supprimée.','success');reloadAll();}else{toast('❌ '+(result||'Erreur'),'error');}}
+
+    function reloadAll(){if(window.invBridge&&typeof window.invBridge.getAllData==='function')renderAll(window.invBridge.getAllData());}
+
+    function filterAll(){
+        var q=g('searchInput').value.toLowerCase().trim();
+        if(!q){renderBlocks(allData);g('countTotal').textContent=allData.length+' événement(s)';return;}
+        var filtered=[];
+        for(var i=0;i<allData.length;i++){
+            var ev=allData[i].evenement,invs=allData[i].invitations;
+            var evMatch=(ev.titre||'').toLowerCase().indexOf(q)>=0;
+            var filtInvs=invs.filter(function(inv){return(inv.email||'').toLowerCase().indexOf(q)>=0||(inv.roleInvite||'').toLowerCase().indexOf(q)>=0;});
+            if(evMatch||filtInvs.length>0)filtered.push({evenement:ev,invitations:evMatch?invs:filtInvs});
+        }
+        g('countTotal').textContent=filtered.length+' événement(s)';
+        g('stateEmpty').style.display=filtered.length===0?'block':'none';
+        renderBlocks(filtered);
+    }
+
+    /* ══ MAP ══ */
+    var mapInstances={};
+    function buildMapBlock(evId,lieu){return'<div class="ev-map-wrap"><div class="ev-map-loading" id="mapLoading_'+evId+'">🗺️ Chargement de la carte…</div><div id="map_'+evId+'" style="height:150px;width:100%;display:none"></div></div><button class="btn-itineraire" id="itineraire_'+evId+'" onclick="openInBrowser(this.getAttribute(\'data-url\'))" style="display:none">🧭 Voir l itinéraire</button>';}
+    function initMaps(){var els=document.querySelectorAll('[id^="mapLoading_"]');els.forEach(function(el){var evId=el.id.replace('mapLoading_','');if(mapInstances[evId])return;var entry=null;for(var i=0;i<allData.length;i++){if(String(allData[i].evenement.id)===String(evId)){entry=allData[i];break;}}if(!entry||!entry.evenement.lieu)return;geocodeAndShow(evId,entry.evenement.lieu);});}
+    function geocodeAndShow(evId,lieu){
+        fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(lieu+', Tunisie')+'&limit=1',{headers:{'Accept-Language':'fr'}})
+            .then(function(r){return r.json();})
+            .then(function(data){
+                var loadEl=document.getElementById('mapLoading_'+evId),mapEl=document.getElementById('map_'+evId),btnEl=document.getElementById('itineraire_'+evId);
+                if(!data||data.length===0){if(loadEl)loadEl.innerHTML='📍 Carte indisponible pour ce lieu';return;}
+                var lat=parseFloat(data[0].lat),lng=parseFloat(data[0].lon);
+                if(loadEl)loadEl.style.display='none';if(mapEl)mapEl.style.display='block';
+                var map=L.map('map_'+evId,{center:[lat,lng],zoom:15,zoomControl:true,scrollWheelZoom:false});
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:19}).addTo(map);
+                var icon=L.divIcon({html:'<div style="background:linear-gradient(135deg,#1d4ed8,#06b6d4);width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid #fff;box-shadow:0 4px 12px rgba(29,78,216,.4)"></div>',iconSize:[30,30],iconAnchor:[15,30],className:''});
+                L.marker([lat,lng],{icon:icon}).addTo(map).bindPopup('<strong>📍 '+lieu+'</strong>').openPopup();
+                mapInstances[evId]=map;
+                if(btnEl){btnEl.setAttribute('data-url','https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng);btnEl.style.display='flex';}
+            }).catch(function(){var loadEl=document.getElementById('mapLoading_'+evId);if(loadEl)loadEl.innerHTML='⚠️ Impossible de charger la carte';});
+    }
+
+    /* ══ UTILS ══ */
+    function g(id){return document.getElementById(id);}
+    function fmtJava(s){if(!s)return'';var p=s.split('T');return p[0]+' '+((p[1]||'00:00').substring(0,5))+':00';}
+    function fmtDate(s){if(!s)return'—';try{var d=new Date(s.replace(' ','T'));return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return s;}}
+    function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+    var _tt;
+    function toast(msg,type){var t=g('toast');g('toastMsg').textContent=msg;t.className='show '+(type||'success');clearTimeout(_tt);_tt=setTimeout(function(){t.className=type||'success';},3500);}
+
+    g('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+    g('dialogOverlay').addEventListener('click',function(e){if(e.target===this)closeDialog();});
+
+    /* ══ INIT PICKER modal modifier ══ */
+    dp_init('mDate', function(){ vm('mDate'); }, true);
+
+    /* ══ QR CODE ══ */
+    var qrInstance=null;
+    function openQr(evId){
+        var entry=null;for(var i=0;i<allData.length;i++){if(String(allData[i].evenement.id)===String(evId)){entry=allData[i];break;}}
+        if(!entry){toast('Données introuvables','error');return;}
+        var ev=entry.evenement,invs=entry.invitations;
+        g('qrEvName').textContent=ev.titre;g('qrOverlay').setAttribute('data-titre',ev.titre);
+        g('qrEvSub').textContent=invs.length+' invité(s) — '+(ev.mode==='EN_LIGNE'?'🌐 En ligne':'🏢 Présentiel');
+        g('qrCount').textContent=invs.length===0?'Aucun invité pour cet événement':invs.length+' invité(s) encodé(s) dans le QR Code';
+        var listHtml='';
+        if(invs.length===0){listHtml='<div class="qr-empty-inv">📭 Aucune invitation pour cet événement</div>';}
+        else{for(var j=0;j<invs.length;j++){var inv=invs[j];listHtml+='<div class="qr-invite-row"><span class="qr-invite-dot"></span><span class="qr-invite-email">'+esc(inv.email)+'</span>'+(inv.roleInvite?'<span class="qr-invite-role">'+esc(inv.roleInvite)+'</span>':'')+'</div>';}}
+        g('qrInvitesList').innerHTML=listHtml;
+        g('qrCanvas').innerHTML='<div style="width:220px;height:220px;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:13px">⏳ Génération...</div>';
+        if(window.invBridge&&typeof window.invBridge.generateQr==='function'){window.invBridge.generateQr(buildQrContent(ev,invs));}
+        else{toast('Bridge indisponible','error');return;}
+        g('qrOverlay').classList.add('show');
+    }
+    function showQrImage(base64Png){g('qrCanvas').innerHTML='<img src="data:image/png;base64,'+base64Png+'" width="220" height="220" style="display:block;border-radius:8px"/>';}
+    function buildQrContent(ev,invs){var lines=['=== INVESTIA — ÉVÉNEMENT ===','Titre    : '+(ev.titre||'—'),'Mode     : '+(ev.mode==='EN_LIGNE'?'En ligne':'Présentiel')];if(ev.mode==='EN_LIGNE'&&ev.meetingLink)lines.push('Lien     : '+ev.meetingLink);if(ev.mode==='PRESENTIEL'&&ev.lieu)lines.push('Lieu     : '+ev.lieu);if(ev.dateDebut)lines.push('Début    : '+fmtDate(ev.dateDebut));lines.push('','=== LISTE DES INVITÉS ('+invs.length+') ===');for(var i=0;i<invs.length;i++){var inv=invs[i];lines.push((i+1)+'. '+inv.email+(inv.roleInvite?' ('+inv.roleInvite+')':''));}lines.push('','Généré par Investia');return lines.join('\n');}
+    function closeQr(){g('qrOverlay').classList.remove('show');}
+    function downloadQr(){var img=g('qrCanvas').querySelector('img');if(!img){toast('QR Code non encore généré','error');return;}var titre=g('qrOverlay').getAttribute('data-titre')||'evenement';if(window.invBridge&&typeof window.invBridge.downloadQr==='function'){window.invBridge.downloadQr(titre);}else{toast('Bridge indisponible','error');}}
+    g('qrOverlay').addEventListener('click',function(e){if(e.target===this)closeQr();});
+</script>
 </body>
 </html>

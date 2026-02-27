@@ -29,7 +29,6 @@ public class InvitationBridge {
     private static final DateTimeFormatter FMT  = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final WebEngine engine;
-    // ✅ Référence forte — empêche le GC
     private JSObject jsWindow;
 
     public InvitationBridge(WebEngine engine) {
@@ -44,46 +43,41 @@ public class InvitationBridge {
 
     // ══════════════════════════════════════════════
     //  NAVIGATION → page Événements
-    //  Appelé depuis JS : window.invBridge.goEvenements()
     // ══════════════════════════════════════════════
     public void goEvenements() {
         Platform.runLater(() -> {
             try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/fxml/ajout_evenement.fxml")
-                );
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ajout_evenement.fxml"));
                 Parent root  = loader.load();
-                Stage  stage = (Stage) Window.getWindows().stream()
-                        .filter(Window::isShowing)
-                        .findFirst().orElse(null);
-                if (stage != null) {
-                    stage.setTitle("Investia — Événements");
-                    stage.getScene().setRoot(root);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                Stage  stage = (Stage) Window.getWindows().stream().filter(Window::isShowing).findFirst().orElse(null);
+                if (stage != null) { stage.setTitle("Investia — Événements"); stage.getScene().setRoot(root); }
+            } catch (Exception e) { e.printStackTrace(); }
         });
     }
 
     // ══════════════════════════════════════════════
     //  NAVIGATION → page Chatbot
-    //  Appelé depuis JS : window.invBridge.goChatbot()
     // ══════════════════════════════════════════════
     public void goChatbot() {
         Platform.runLater(() -> {
             try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/fxml/chatbot.fxml")
-                );
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chatbot.fxml"));
                 Parent root  = loader.load();
-                Stage  stage = (Stage) Window.getWindows().stream()
-                        .filter(Window::isShowing)
-                        .findFirst().orElse(null);
-                if (stage != null) {
-                    stage.setTitle("Investia — Chatbot");
-                    stage.getScene().setRoot(root);
-                }
+                Stage  stage = (Stage) Window.getWindows().stream().filter(Window::isShowing).findFirst().orElse(null);
+                if (stage != null) { stage.setTitle("Investia — Chatbot"); stage.getScene().setRoot(root); }
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+    }
+
+    // ══════════════════════════════════════════════
+    //  ✅ OUVRIR URL DANS LE NAVIGATEUR SYSTÈME
+    //  Appelé depuis JS : window.invBridge.openUrl(url)
+    //  Évite d'ouvrir une nouvelle fenêtre JavaFX
+    // ══════════════════════════════════════════════
+    public void openUrl(String url) {
+        Platform.runLater(() -> {
+            try {
+                java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -92,7 +86,6 @@ public class InvitationBridge {
 
     // ══════════════════════════════════════════════
     //  GET ALL EVENEMENTS + INVITATIONS
-    //  Retourne JSON : [ { evenement, invitations:[] }, ... ]
     // ══════════════════════════════════════════════
     public String getAllData() {
         return wrapJson(() -> {
@@ -113,7 +106,6 @@ public class InvitationBridge {
                         .append("},")
                         .append("\"invitations\":[");
 
-                // Invitations de cet événement
                 boolean first = true;
                 for (Invitation inv : invs) {
                     if (inv.getEvenementId() == ev.getId()) {
@@ -140,19 +132,10 @@ public class InvitationBridge {
     // ══════════════════════════════════════════════
     public String ajouterInvitation(int evenementId, String dateInvitation, String roleInvite, String email) {
         return wrapOk(() -> {
-            Invitation inv = new Invitation(
-                    evenementId,
-                    LocalDateTime.parse(dateInvitation, FMT),
-                    roleInvite,
-                    email
-            );
+            Invitation inv = new Invitation(evenementId, LocalDateTime.parse(dateInvitation, FMT), roleInvite, email);
             invService.ajouter(inv);
-
-            // ✅ Envoi email automatique à l'invité
             Evenement ev = evService.getById(evenementId);
-            if (ev != null) {
-                Emailservice.envoyerInvitation(inv, ev);
-            }
+            if (ev != null) Emailservice.envoyerInvitation(inv, ev);
         });
     }
 
@@ -161,26 +144,18 @@ public class InvitationBridge {
     // ══════════════════════════════════════════════
     public String modifierInvitation(int id, int evenementId, String dateInvitation, String roleInvite, String email) {
         return wrapOk(() -> {
-            Invitation inv = new Invitation(
-                    id, evenementId,
-                    LocalDateTime.parse(dateInvitation, FMT),
-                    roleInvite,
-                    email
-            );
+            Invitation inv = new Invitation(id, evenementId, LocalDateTime.parse(dateInvitation, FMT), roleInvite, email);
             invService.modifier(inv);
         });
     }
 
     // ══════════════════════════════════════════════
     //  GÉNÉRER QR CODE
-    //  Appelé depuis JS : window.invBridge.generateQr(content)
-    //  Retourne le résultat via JS : showQrImage(base64)
     // ══════════════════════════════════════════════
-    // ✅ Stocker le base64 courant pour le téléchargement
     private String currentQrBase64 = null;
 
     public void generateQr(String content) {
-        javafx.application.Platform.runLater(() -> {
+        Platform.runLater(() -> {
             try {
                 String base64 = Qrservice.genererBase64(content, 220);
                 currentQrBase64 = base64;
@@ -193,39 +168,27 @@ public class InvitationBridge {
     }
 
     public void downloadQr(String nomEvenement) {
-        javafx.application.Platform.runLater(() -> {
+        Platform.runLater(() -> {
             try {
                 if (currentQrBase64 == null) {
                     engine.executeScript("toast('QR Code non généré', 'error')");
                     return;
                 }
-
-                // ✅ Sauvegarder directement sur le Bureau — sans FileChooser
                 String safeName = nomEvenement.replaceAll("[^a-zA-Z0-9_-]", "_");
                 String bureau   = System.getProperty("user.home") + java.io.File.separator + "Downloads";
                 java.io.File dossier = new java.io.File(bureau);
-                if (!dossier.exists()) {
-                    dossier = new java.io.File(System.getProperty("user.home"));
-                }
+                if (!dossier.exists()) dossier = new java.io.File(System.getProperty("user.home"));
 
                 java.io.File file = new java.io.File(dossier, "qrcode_" + safeName + ".png");
-
                 int n = 1;
                 while (file.exists()) {
                     file = new java.io.File(dossier, "qrcode_" + safeName + "_" + n + ".png");
                     n++;
                 }
-
                 byte[] bytes = java.util.Base64.getDecoder().decode(currentQrBase64);
-                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) {
-                    fos.write(bytes);
-                }
-
-                final String chemin = file.getAbsolutePath();
-                engine.executeScript("toast('✅ QR Code sauvegardé dans Téléchargements : "
-                        + file.getName() + "', 'success')");
-                System.out.println("✅ QR Code sauvegardé : " + chemin);
-
+                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(file)) { fos.write(bytes); }
+                engine.executeScript("toast('✅ QR Code sauvegardé dans Téléchargements : " + file.getName() + "', 'success')");
+                System.out.println("✅ QR Code sauvegardé : " + file.getAbsolutePath());
             } catch (Exception e) {
                 e.printStackTrace();
                 engine.executeScript("toast('❌ Erreur sauvegarde : " + e.getMessage() + "', 'error')");
@@ -260,6 +223,6 @@ public class InvitationBridge {
 
     private String ldt(LocalDateTime t) { return t==null?"":t.format(FMT); }
 
-    @FunctionalInterface interface SqlRunnable   { void run() throws Exception; }
-    @FunctionalInterface interface SqlSupplier<T>{ T    get() throws Exception; }
+    @FunctionalInterface interface SqlRunnable    { void run() throws Exception; }
+    @FunctionalInterface interface SqlSupplier<T> { T    get() throws Exception; }
 }

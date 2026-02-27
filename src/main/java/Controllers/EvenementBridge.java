@@ -43,8 +43,7 @@ public class EvenementBridge {
     }
 
     // ══════════════════════════════════════════════
-    //  NAVIGATION → page Invitations
-    //  Appelé depuis JS : window.javaBridge.goInvitations()
+    //  NAVIGATION → Chatbot
     // ══════════════════════════════════════════════
     public void goChatbot() {
         Platform.runLater(() -> {
@@ -61,20 +60,33 @@ public class EvenementBridge {
         });
     }
 
+    // ══════════════════════════════════════════════
+    //  NAVIGATION → Invitations
+    // ══════════════════════════════════════════════
     public void goInvitations() {
         Platform.runLater(() -> {
             try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/fxml/invitation.fxml")
-                );
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/invitation.fxml"));
                 Parent root  = loader.load();
                 Stage  stage = (Stage) Window.getWindows().stream()
-                        .filter(Window::isShowing)
-                        .findFirst().orElse(null);
+                        .filter(Window::isShowing).findFirst().orElse(null);
                 if (stage != null) {
                     stage.setTitle("Investia — Invitations");
                     stage.getScene().setRoot(root);
                 }
+            } catch (Exception e) { e.printStackTrace(); }
+        });
+    }
+
+    // ══════════════════════════════════════════════
+    //  ✅ OUVRIR URL DANS LE NAVIGATEUR SYSTÈME
+    //  Appelé depuis JS : window.javaBridge.openUrl(url)
+    //  Évite d'ouvrir une nouvelle fenêtre JavaFX qui plante l'app
+    // ══════════════════════════════════════════════
+    public void openUrl(String url) {
+        Platform.runLater(() -> {
+            try {
+                java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -83,14 +95,11 @@ public class EvenementBridge {
 
     // ══════════════════════════════════════════════
     //  OUVRIR FENÊTRE MODIFIER
-    //  Appelé depuis ajoutEvenement.html :
-    //  window.javaBridge.openModifierWindow(id, titre, ...)
     // ══════════════════════════════════════════════
     public void openModifierWindow(int id, String titre, int projectId, int organisateurId,
                                    String description, String mode, String dateDebut, String dateFin,
                                    String lieu, String meetingLink) {
 
-        // onSuccess : recharge la liste dans la page principale
         Runnable onSuccess = () -> Platform.runLater(() -> {
             try {
                 String json = getAll();
@@ -127,31 +136,25 @@ public class EvenementBridge {
 
     // ══════════════════════════════════════════════
     //  EXPORT PDF
-    //  Appelé depuis JS : window.javaBridge.exportPdf()
     // ══════════════════════════════════════════════
     public void exportPdf() {
         Platform.runLater(() -> {
             try {
-                // FileChooser pour choisir l'emplacement de sauvegarde
                 FileChooser fc = new FileChooser();
                 fc.setTitle("Enregistrer le rapport PDF");
                 fc.setInitialFileName("evenements_investia.pdf");
-                fc.getExtensionFilters().add(
-                        new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf")
-                );
+                fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
 
                 Stage stage = (Stage) Window.getWindows().stream()
                         .filter(Window::isShowing).findFirst().orElse(null);
 
                 File file = fc.showSaveDialog(stage);
-                if (file == null) return; // Annulé par l'utilisateur
+                if (file == null) return;
 
-                // Générer le PDF
                 PdfExportService.generer(service.getAll(), file.getAbsolutePath());
 
-                // Notifier le HTML — succès
-                engine.executeScript("onPdfExported('OK', '" +
-                        file.getAbsolutePath().replace("\\", "/").replace("'", "\'") + "')");
+                engine.executeScript("onPdfExported('OK', '"
+                        + file.getAbsolutePath().replace("\\", "/").replace("'", "\\'") + "')");
 
             } catch (Exception e) {
                 e.printStackTrace();
